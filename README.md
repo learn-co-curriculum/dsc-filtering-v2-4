@@ -75,9 +75,9 @@ SELECT name, age, breed FROM cats;
 Which should give us back:
 
 ```bash
-Maru     | 3 | Scottish Fold
-Hannah   | 1 | Tabby
-Lil' Bub | 5 | American Shorthair
+1 | Maru     | 3 | Scottish Fold
+2 | Hannah   | 1 | Tabby
+3 | Lil' Bub | 5 | American Shorthair
 ```
 
 But, since we aren't trying to explicitly list the columns we want to select in this case, and are really trying to say "Give me all the data from all the columns for all of the wizards" we can make use of a special selector, known commonly as the "wildcard" selector. You can think of this selector as simply meaning "all" or anything. It is represented by an asterix like `*`. So, to `SELECT` all the data from all of the cats	 we would say:

@@ -48,7 +48,11 @@ Let's add a few more cats to our table. Create a file, `01_insert_cats_into_cats
 |  1 | "Lil' Bub" | 5 | American Shorthair|
 |  2  | "Hannah" | 1 | Tabby|
 
-Each `INSERT INTO` statement gets it's own line in the `.sql` file in your text editor. Each line needs to end with a `;`. 
+Each `INSERT INTO` statement gets it's own line in the `.sql` file in your text editor. Each line needs to end with a `;`. Run the file with the following code in your terminal:
+
+```bash
+pets_database.db > 01_insert_cats_into_table.sql
+```
 
 Now, we'll learn how to `SELECT` data from a table, which will help us to confirm that we inserted the above data correctly. 
 
@@ -80,7 +84,7 @@ Which should give us back:
 3 | Lil' Bub | 5 | American Shorthair
 ```
 
-But, since we aren't trying to explicitly list the columns we want to select in this case, and are really trying to say "Give me all the data from all the columns for all of the wizards" we can make use of a special selector, known commonly as the "wildcard" selector. You can think of this selector as simply meaning "all" or anything. It is represented by an asterix like `*`. So, to `SELECT` all the data from all of the cats	 we would say:
+A faster way to do get data from every column in our table is to use a special selector, know commonly as the 'wildcard', `*` selector. The `*` selector means: "Give me all the data from all the columns for all of the wizards" Using the wildcar, we can `SELECT` all the data from all of columns in the cats table like this:
 
 ```sql
 SELECT * FROM cats;

@@ -51,7 +51,7 @@ Let's add a few more cats to our table. Create a file, `01_insert_cats_into_cats
 Each `INSERT INTO` statement gets it's own line in the `.sql` file in your text editor. Each line needs to end with a `;`. Run the file with the following code in your terminal:
 
 ```bash
-pets_database.db < 01_insert_cats_into_table.sql
+pets_database.db < 01_insert_cats_into_cats_table.sql
 ```
 
 Now, we'll learn how to `SELECT` data from a table, which will help us to confirm that we inserted the above data correctly. 

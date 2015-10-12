@@ -184,7 +184,7 @@ DELETE FROM [table name] WHERE [column name] = [value]
 Let's go ahead and delete Lil' Bub from our `cats` table (sorry Lil' Bub): 
 
 ```sql
-sqlite> DELETE FROM cats WHERE id = 3
+sqlite> DELETE FROM cats WHERE id = 3;
 ```
 
 Notice that this time we selected the row to delete using the Primary Key column. Remember that every table row has a Primary Key column that is unique. Lil' Bub was the third row in the database and thus had an id of `3`. 

@@ -179,7 +179,7 @@ To delete table rows, we use the `DELETE` keyword.
 A boilerplate `DELETE` statement looks like this: 
 
 ```sql
-DELETE FROM [table name] WHERE [column name] = [value]
+DELETE FROM [table name] WHERE [column name] = [value];
 ```
 
 Let's go ahead and delete Lil' Bub from our `cats` table (sorry Lil' Bub): 

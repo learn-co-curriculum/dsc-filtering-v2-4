@@ -53,6 +53,7 @@ Each `INSERT INTO` statement gets it's own line in the `.sql` file in your text 
 ```bash
 pets_database.db < 01_insert_cats_into_cats_table.sql
 ```
+**NOTE:** This is a bash command, run this from your bash not sqlite console.
 
 Now, we'll learn how to `SELECT` data from a table, which will help us to confirm that we inserted the above data correctly. 
 

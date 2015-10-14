@@ -2,10 +2,12 @@
 
 ## Objectives
 
-1. Learn how to insert data (i.e. rows) into a database table. 
-2. Learn how to select data from a database table. 
-3. Learn how to update data within a database table. 
-4. Learn how to delete data from a database table. 
+1. Use the `INSERT INTO` command to insert data (i.e. rows) into a database table. 
+2. Use `SELECT` statements to select data from a database table. 
+3. Use the `WHERE` Clause to select data from specific table rows.
+4. Use comparison operators, like `<` or `>` to select specific data.
+3. Use `UPDATE` statements to update data within a database table. 
+4. Use `DELETE` statements to delete data from a database table. 
 
 ## Inserting Data
 
@@ -69,7 +71,7 @@ A basic `SELECT` statement works like this:
 SELECT [names of columns we are going to select] FROM [table we are selecting from];
 ```
 
-We specifiy the names of the columns we want to SELECT and then tell SQL the table we want to select them FROM. It's fairly straight forward.
+We specify the names of the columns we want to SELECT and then tell SQL the table we want to select them FROM. 
 
 For this particular select, we are also going to be making use of a special character. We want to select all the rows in our table, and we want to return the data stored in any and all columns in those rows. To do this, we could pass the name of each column explicitly:
 
@@ -123,7 +125,7 @@ SELECT DISTINCT name FROM cats;
 
 
 #### Selecting Based on Conditions: The `WHERE` Clause
- What happens when we want to retrieve a specific table row, for example the row that belongs to Maru? Or to retrieve all the baby cats who are younger than two years old? We can use the `WHERE` keyword to select data based on specific conditions. Here's an example of a boilerplate `SELECT` statement using a `WHERE` clause. 
+What happens when we want to retrieve a specific table row, for example the row that belongs to Maru? Or to retrieve all the baby cats who are younger than two years old? We can use the `WHERE` keyword to select data based on specific conditions. Here's an example of a boilerplate `SELECT` statement using a `WHERE` clause. 
  
  ```sql
  SELECT * FROM [table name] WHERE [column name] = [some value];

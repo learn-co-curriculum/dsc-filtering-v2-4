@@ -1,13 +1,17 @@
 # Inserting, Selecting, Updating and Deleting Database Rows
 
+## Overview
+
+In this lesson, we'll cover different ways to manipulate and select data from SQL database tables.  m
+
 ## Objectives
 
-1. Use the `INSERT INTO` command to insert data (i.e. rows) into a database table.
-2. Use `SELECT` statements to select data from a database table.
-3. Use the `WHERE` Clause to select data from specific table rows.
-4. Use comparison operators, like `<` or `>` to select specific data.
-3. Use `UPDATE` statements to update data within a database table.
-4. Use `DELETE` statements to delete data from a database table.
+1. Use the `INSERT INTO` command to insert data (i.e. rows) into a database table
+2. Use `SELECT` statements to select data from a database table
+3. Use the `WHERE` Clause to select data from specific table rows
+4. Use comparison operators, like `<` or `>`, to select specific data
+3. Use `UPDATE` statements to update data within a database table
+4. Use `DELETE` statements to delete data from a database table
 
 ## Setting Up Our Database
 
@@ -43,14 +47,14 @@ We use the `INSERT INTO` command, followed by the name of the table to which we 
 
 **Important:** Note that we *didn't specify* the "id" column name or value. Since we created the `cats` table with an "id" column whose type is `INTEGER PRIMARY KEY`, we don't have to specify the id column values when we insert data. Primary Key columns are auto-incrementing. As long as you have defined an id column with a data type of `INTEGER PRIMARY KEY`, a newly inserted row's id column will be automatically given the correct value.
 
-Let's add a few more cats to our table. Create a file, `01_insert_cats_into_cats_table.sql`. Use several `INSERT INTO` statements to insert the following cats into the table:
+Let's add a few more cats to our table. This time we'll do this via our text editor. Create a file, `01_insert_cats_into_cats_table.sql`. Use several `INSERT INTO` statements to insert the following cats into the table:
 
 |id |name| age| breed|
 |---|----|----|------|
 |  1 | "Lil' Bub" | 5 | American Shorthair|
 |  2  | "Hannah" | 1 | Tabby|
 
-Each `INSERT INTO` statement gets it's own line in the `.sql` file in your text editor. Each line needs to end with a `;`. Run the file with the following code in your terminal:
+Each `INSERT INTO` statement gets i's own line in the `.sql` file in your text editor. Each line needs to end with a `;`. Run the file with the following code in your terminal:
 
 ```bash
 sqlite3 pets_database.db < 01_insert_cats_into_cats_table.sql
@@ -73,7 +77,7 @@ SELECT [names of columns we are going to select] FROM [table we are selecting fr
 
 We specify the names of the columns we want to SELECT and then tell SQL the table we want to select them FROM.
 
-For this particular select, we are also going to be making use of a special character. We want to select all the rows in our table, and we want to return the data stored in any and all columns in those rows. To do this, we could pass the name of each column explicitly:
+We want to select all the rows in our table, and we want to return the data stored in any and all columns in those rows. To do this, we could pass the name of each column explicitly:
 
 ```sql
 SELECT name, age, breed FROM cats;
@@ -87,7 +91,7 @@ Which should give us back:
 3 | Lil' Bub | 5 | American Shorthair
 ```
 
-A faster way to do get data from every column in our table is to use a special selector, know commonly as the 'wildcard', `*` selector. The `*` selector means: "Give me all the data from all the columns for all of the wizards" Using the wildcar, we can `SELECT` all the data from all of columns in the cats table like this:
+A faster way to get data from every column in our table is to use a special selector, known commonly as the 'wildcard', `*` selector. The `*` selector means: "Give me all the data from all the columns for all of the cats" Using the wildcard, we can `SELECT` all the data from all of the columns in the cats table like this:
 
 ```sql
 SELECT * FROM cats;
@@ -110,7 +114,7 @@ Hannah
 Lil' Bub
 ```
 
-You can even select more than one column name at at time. For example, try out:
+You can even select more than one column name at a time. For example, try out:
 
 ```sql
 SELECT name, age FROM cats;
@@ -125,7 +129,7 @@ SELECT DISTINCT name FROM cats;
 
 
 #### Selecting Based on Conditions: The `WHERE` Clause
-What happens when we want to retrieve a specific table row, for example the row that belongs to Maru? Or to retrieve all the baby cats who are younger than two years old? We can use the `WHERE` keyword to select data based on specific conditions. Here's an example of a boilerplate `SELECT` statement using a `WHERE` clause.
+What happens when we want to retrieve a specific table row? For example the row that belongs to Maru? Or to retrieve all the baby cats who are younger than two years old? We can use the `WHERE` keyword to select data based on specific conditions. Here's an example of a boilerplate `SELECT` statement using a `WHERE` clause.
 
  ```sql
  SELECT * FROM [table name] WHERE [column name] = [some value];
@@ -148,11 +152,11 @@ What happens when we want to retrieve a specific table row, for example the row 
  SELECT * FROM cats WHERE age > 2;
  ```
 
-**Advanced:** The SQL statements we're learning here will eventually be used to integrate the applications you'll build with a database. For example, it's easy to imagine a web application that has many users. When a user signs into your app, then, you'll need to access your database and select the user that matches the credentials an individual is using to log in.
+**Advanced:** The SQL statements we're learning here will eventually be used to integrate the applications you'll build with a database. For example, it's easy to imagine a web application that has many users. When a user signs into your app, you'll need to access your database and select the user that matches the credentials an individual is using to log in.
 
 ## Updating Data
 
-Let's talk about updating, or changing, data in our table rows. We do so with the `UPDATE` keyword.
+Let's talk about updating, or changing, data in our table rows. We do this with the `UPDATE` keyword.
 
 ### Code Along III: UPDATE
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-In this lesson, we'll cover different ways to manipulate and select data from SQL database tables.  m
+In this lesson, we'll cover different ways to manipulate and select data from SQL database tables.
 
 ## Objectives
 
@@ -54,7 +54,7 @@ Let's add a few more cats to our table. This time we'll do this via our text edi
 |  1 | "Lil' Bub" | 5 | American Shorthair|
 |  2  | "Hannah" | 1 | Tabby|
 
-Each `INSERT INTO` statement gets i's own line in the `.sql` file in your text editor. Each line needs to end with a `;`. Run the file with the following code in your terminal:
+Each `INSERT INTO` statement gets its own line in the `.sql` file in your text editor. Each line needs to end with a `;`. Run the file with the following code in your terminal:
 
 ```bash
 sqlite3 pets_database.db < 01_insert_cats_into_cats_table.sql
@@ -65,7 +65,7 @@ Now, we'll learn how to `SELECT` data from a table, which will help us to confir
 
 ## Selecting Data
 
-Now that we've inserted some data into our `cats` table, we likely want to read that data. This is where the `SELECT` statement comes it. We use it to retrieve database data, or rows.
+Now that we've inserted some data into our `cats` table, we likely want to read that data. This is where the `SELECT` statement comes in. We use it to retrieve database data, or rows.
 
 ### Code Along II: SELECT FROM
 

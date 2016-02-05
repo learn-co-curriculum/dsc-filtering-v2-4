@@ -166,7 +166,7 @@ A boilerplate `UPDATE` statement looks like this:
 UPDATE [table name] SET [column name] = [new value] WHERE [column name] = [value];
 ```
 
-The `UPDATE` statement uses a `WHERE` clause to grab the row you want to update. It identifies the table name you are looking in and re-sets the data in a particular column to a new value.
+The `UPDATE` statement uses a `WHERE` clause to grab the row you want to update. It identifies the table name you are looking in and resets the data in a particular column to a new value.
 
 Let's update one of our cats. Turns out Maru's friend Hannah is actually Maru's friend *Hana*. Let's update that row to change the name to the correct spelling:
 

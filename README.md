@@ -80,7 +80,7 @@ We specify the names of the columns we want to SELECT and then tell SQL the tabl
 We want to select all the rows in our table, and we want to return the data stored in any and all columns in those rows. To do this, we could pass the name of each column explicitly:
 
 ```sql
-SELECT name, age, breed FROM cats;
+SELECT id, name, age, breed FROM cats;
 ```
 
 Which should give us back:
@@ -197,3 +197,5 @@ sqlite> DELETE FROM cats WHERE id = 3;
 Notice that this time we selected the row to delete using the Primary Key column. Remember that every table row has a Primary Key column that is unique. Lil' Bub was the third row in the database and thus had an id of `3`.
 
 <p data-visibility='hidden'>View <a href='https://learn.co/lessons/sql-insert-select-update-code-along' title='Inserting, Selecting, Updating and Deleting Database Rows'>Inserting, Selecting, Updating and Deleting Database Rows</a> on Learn.co and start learning to code for free.</p>
+
+<p data-visibility='hidden'>View <a href='https://learn.co/lessons/sql-insert-select-update-code-along'>SQL Inserting, Updating, and Selecting</a> on Learn.co and start learning to code for free.</p>

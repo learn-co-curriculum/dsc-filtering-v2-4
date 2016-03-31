@@ -51,7 +51,7 @@ Let's add a few more cats to our table. This time we'll do this via our text edi
 
 |id |name| age| breed|
 |---|----|----|------|
-|  1 | "Lil' Bub" | 5 | American Shorthair|
+|  1 | "Lil\' Bub" | 5 | American Shorthair|
 |  2  | "Hannah" | 1 | Tabby|
 
 Each `INSERT INTO` statement gets its own line in the `.sql` file in your text editor. Each line needs to end with a `;`. Run the file with the following code in your terminal:
@@ -88,7 +88,7 @@ Which should give us back:
 ```bash
 1 | Maru     | 3 | Scottish Fold
 2 | Hannah   | 1 | Tabby
-3 | Lil' Bub | 5 | American Shorthair
+3 | Lil\' Bub | 5 | American Shorthair
 ```
 
 A faster way to get data from every column in our table is to use a special selector, known commonly as the 'wildcard', `*` selector. The `*` selector means: "Give me all the data from all the columns for all of the cats" Using the wildcard, we can `SELECT` all the data from all of the columns in the cats table like this:

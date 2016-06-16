@@ -149,7 +149,7 @@ What happens when we want to retrieve a specific table row? For example the row 
  We can also use comparison operators, like `<` or `>` to select specific data. Let's give it a shot. Use the following statement to select the young cats:
 
  ```sql
- SELECT * FROM cats WHERE age > 2;
+ SELECT * FROM cats WHERE age < 2;
  ```
 
 **Advanced:** The SQL statements we're learning here will eventually be used to integrate the applications you'll build with a database. For example, it's easy to imagine a web application that has many users. When a user signs into your app, you'll need to access your database and select the user that matches the credentials an individual is using to log in.
@@ -199,3 +199,5 @@ Notice that this time we selected the row to delete using the Primary Key column
 <p data-visibility='hidden'>View <a href='https://learn.co/lessons/sql-insert-select-update-code-along' title='Inserting, Selecting, Updating and Deleting Database Rows'>Inserting, Selecting, Updating and Deleting Database Rows</a> on Learn.co and start learning to code for free.</p>
 
 <p data-visibility='hidden'>View <a href='https://learn.co/lessons/sql-insert-select-update-code-along'>SQL Inserting, Updating, and Selecting</a> on Learn.co and start learning to code for free.</p>
+
+<p class='util--hide'>View <a href='https://learn.co/lessons/sql-insert-select-update-code-along'>SQL Inserting, Updating, and Selecting</a> on Learn.co and start learning to code for free.</p>

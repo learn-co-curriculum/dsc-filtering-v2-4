@@ -111,7 +111,7 @@ That should return the following:
 ```bash
 Maru
 Hannah
-Lil' Bub
+Lil\' Bub
 ```
 
 You can even select more than one column name at a time. For example, try out:

@@ -131,26 +131,26 @@ SELECT DISTINCT name FROM cats;
 #### Selecting Based on Conditions: The `WHERE` Clause
 What happens when we want to retrieve a specific table row? For example the row that belongs to Maru? Or to retrieve all the baby cats who are younger than two years old? We can use the `WHERE` keyword to select data based on specific conditions. Here's an example of a boilerplate `SELECT` statement using a `WHERE` clause.
 
- ```sql
- SELECT * FROM [table name] WHERE [column name] = [some value];
- ```
+```sql
+SELECT * FROM [table name] WHERE [column name] = [some value];
+```
 
- Let's retrieve *just Maru* from our `cats` table:
+Let's retrieve *just Maru* from our `cats` table:
 
- ```sql
- sqlite> SELECT * FROM cats WHERE name = "Maru";
- ```
- That statement should return the following:
+```sql
+sqlite> SELECT * FROM cats WHERE name = "Maru";
+```
+That statement should return the following:
 
- ```bash
- Maru|3|Scottish Fold
- ```
+```bash
+1|Maru|3|Scottish Fold
+```
 
- We can also use comparison operators, like `<` or `>` to select specific data. Let's give it a shot. Use the following statement to select the young cats:
+We can also use comparison operators, like `<` or `>` to select specific data. Let's give it a shot. Use the following statement to select the young cats:
 
- ```sql
- SELECT * FROM cats WHERE age < 2;
- ```
+```sql
+SELECT * FROM cats WHERE age < 2;
+```
 
 **Advanced:** The SQL statements we're learning here will eventually be used to integrate the applications you'll build with a database. For example, it's easy to imagine a web application that has many users. When a user signs into your app, you'll need to access your database and select the user that matches the credentials an individual is using to log in.
 

@@ -51,8 +51,8 @@ Let's add a few more cats to our table. This time we'll do this via our text edi
 
 |name|age|breed|
 |----|---|-----|
-|"Lil\' Bub"|5|American Shorthair|
-|"Hannah"|1|Tabby|
+|"Lil\' Bub"|5|"American Shorthair"|
+|"Hannah"|1|"Tabby"|
 
 Each `INSERT INTO` statement gets its own line in the `.sql` file in your text editor. Each line needs to end with a `;`. Run the file with the following code in your terminal:
 

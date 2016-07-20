@@ -110,8 +110,8 @@ That should return the following:
 
 ```bash
 Maru
-Hannah
 Lil\' Bub
+Hannah
 ```
 
 You can even select more than one column name at a time. For example, try out:

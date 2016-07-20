@@ -1,4 +1,4 @@
-# Inserting, Selecting, Updating and Deleting Database Rows
+# Inserting, Selecting, Updating, and Deleting Database Rows
 
 ## Overview
 
@@ -47,12 +47,12 @@ We use the `INSERT INTO` command, followed by the name of the table to which we 
 
 **Important:** Note that we *didn't specify* the "id" column name or value. Since we created the `cats` table with an "id" column whose type is `INTEGER PRIMARY KEY`, we don't have to specify the id column values when we insert data. Primary Key columns are auto-incrementing. As long as you have defined an id column with a data type of `INTEGER PRIMARY KEY`, a newly inserted row's id column will be automatically given the correct value.
 
-Let's add a few more cats to our table. This time we'll do this via our text editor. Create a file, `01_insert_cats_into_cats_table.sql`. Use several `INSERT INTO` statements to insert the following cats into the table:
+Let's add a few more cats to our table. This time we'll do this via our text editor. Create a file, `01_insert_cats_into_cats_table.sql`. Use two `INSERT INTO` statements to insert the following cats into the table:
 
-|id |name| age| breed|
-|---|----|----|------|
-|  1 | "Lil\' Bub" | 5 | American Shorthair|
-|  2  | "Hannah" | 1 | Tabby|
+|name|age|breed|
+|----|---|-----|
+|"Lil\' Bub"|5|American Shorthair|
+|"Hannah"|1|Tabby|
 
 Each `INSERT INTO` statement gets its own line in the `.sql` file in your text editor. Each line needs to end with a `;`. Run the file with the following code in your terminal:
 
@@ -86,9 +86,9 @@ SELECT id, name, age, breed FROM cats;
 Which should give us back:
 
 ```bash
-1 | Maru     | 3 | Scottish Fold
-2 | Hannah   | 1 | Tabby
-3 | Lil\' Bub | 5 | American Shorthair
+1|Maru|3|Scottish Fold
+2|Lil\' Bub|5|American Shorthair
+3|Hannah|1|Tabby
 ```
 
 A faster way to get data from every column in our table is to use a special selector, known commonly as the 'wildcard', `*` selector. The `*` selector means: "Give me all the data from all the columns for all of the cats" Using the wildcard, we can `SELECT` all the data from all of the columns in the cats table like this:
@@ -196,8 +196,4 @@ sqlite> DELETE FROM cats WHERE id = 3;
 
 Notice that this time we selected the row to delete using the Primary Key column. Remember that every table row has a Primary Key column that is unique. Lil' Bub was the third row in the database and thus had an id of `3`.
 
-<p data-visibility='hidden'>View <a href='https://learn.co/lessons/sql-insert-select-update-code-along' title='Inserting, Selecting, Updating and Deleting Database Rows'>Inserting, Selecting, Updating and Deleting Database Rows</a> on Learn.co and start learning to code for free.</p>
-
-<p data-visibility='hidden'>View <a href='https://learn.co/lessons/sql-insert-select-update-code-along'>SQL Inserting, Updating, and Selecting</a> on Learn.co and start learning to code for free.</p>
-
-<p class='util--hide'>View <a href='https://learn.co/lessons/sql-insert-select-update-code-along'>SQL Inserting, Updating, and Selecting</a> on Learn.co and start learning to code for free.</p>
+<p data-visibility='hidden'>View <a href='https://learn.co/lessons/sql-insert-select-update-code-along' title='Inserting, Selecting, Updating, and Deleting Database Rows'>Inserting, Selecting, Updating, and Deleting Database Rows</a> on Learn.co and start learning to code for free.</p>

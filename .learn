@@ -1,5 +1,14 @@
 tags:
+  - SQLite
+  - code along
+  - jupyter
+  - python
   - sql
+
 languages:
-  - sql
+  - SQLite3
+  - python
+
 resources: 0
+
+jupyter_notebook: true

@@ -31,3 +31,5 @@ jspm_packages
 
 # Learn-specific .results.json
 .results.json
+
+*.db

@@ -33,3 +33,8 @@ jspm_packages
 .results.json
 
 *.db
+.DS_Store
+*.ipynb_checkpoints
+*.pytest_cache
+*.pyc
+*__pycache__

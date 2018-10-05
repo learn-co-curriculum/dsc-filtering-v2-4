@@ -7,7 +7,10 @@ In this lesson, we'll cover different ways to manipulate and select data from SQ
 
 ## Objectives
 
+You will be able to:
+
 * Understand the basic structure of a `SELECT` statement in SQL
+* Use `INSERT INTO`, `UPDATE` and `DELETE` statements in SQL
 * Understand the relationship between SQL and relational databases
 
 ## Setting Up Our Database
@@ -237,4 +240,10 @@ cursor.execute('''DELETE FROM cats WHERE id = 2;''')
 Notice that this time we selected the row to delete using the Primary Key column. Remember that every table row has a Primary Key column that is unique. Lil' Bub was the second row in the database and thus had an id of `2`.
 
 <p data-visibility='hidden'>View <a href='https://learn.co/lessons/sql-insert-select-update-code-along' title='Inserting, Selecting, Updating, and Deleting Database Rows'>Inserting, Selecting, Updating, and Deleting Database Rows</a> on Learn.co and start learning to code for free.</p>
+
+
+## Summary
+
+In this section, you learned different ways to manipulate and select data from SQL database tables including inserting, selecting, updating, and deleting database rows.
+
 

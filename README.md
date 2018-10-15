@@ -76,7 +76,7 @@ Each `INSERT INTO` statement gets its own line in the `.sql` file in your text e
 ```python
 file = open("./01_insert_cats_into_cats_table.sql", 'r') # opens the SQL file
 sql = file.read() # reads and returns the SQL statements
-table = cursor.execute(sql) # executes the returned SQL statements and inserts the values into the table
+cursor.execute(sql) # executes the returned SQL statements and inserts the values into the table
 file.close() # closes the file
 ```
 

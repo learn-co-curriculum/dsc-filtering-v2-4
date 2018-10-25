@@ -64,14 +64,31 @@ We use the `INSERT INTO` command, followed by the name of the table to which we 
 
 **Important:** Note that we *didn't specify* the "id" column name or value. Since we created the `cats` table with an "id" column whose type is `INTEGER PRIMARY KEY`, we don't have to specify the id column values when we insert data. Primary Key columns are auto-incrementing. As long as you have defined an id column with a data type of `INTEGER PRIMARY KEY`, a newly inserted row's id column will be automatically given the correct value.
 
-Let's add a few more cats to our table. This time we'll do this via our text editor. Create a file, `01_insert_cats_into_cats_table.sql`. Use two `INSERT INTO` statements to insert the following cats into the table:
+Let's add a few more cats to our table. To do this, we can (1) use our jupyter notebook by navigating to the **home** tab in our browser that is opened after running the `jupyter notebook` command in our command line (*or you can open a new tab and navigate to `localhost:8888`*), or we can (2) open our text editor (i.e. atom or sublime). We'll need to create a file, `01_insert_cats_into_cats_table.sql`. 
+
+To create a file with jupyter notebook, you will need to:
+1. Click the `new` button on the right of the page
+![new-file](click-new.png)
+2. Select `text file` from the drop-down menu
+![text-file](click-text.png)
+3. Click in the top right on `Untitled.txt` and rename the file appropriately
+![rename-file](rename-file.png)
+4. Enter the appropriate new file name and press `ok`
+![enter-name](enter-name.png)
+
+To create a text file via your text editor, you can simply enter the following command in your command line:
+
+> `touch 01_insert_cats_into_cats_table.sql`
+* **Note:** *you will need to be located inside the directory where this file should be created.*
+
+Once the `01_insert_cats_into_cats_table.sql` file is created, use two `INSERT INTO` statements to insert the following cats into the table:
 
 |name|age|breed|
 |----|---|-----|
 |"Lil\' Bub"|5|"American Shorthair"|
 |"Hannah"|1|"Tabby"|
 
-Each `INSERT INTO` statement gets its own line in the `.sql` file in your text editor. Each line needs to end with a `;`. Run the file with the following code:
+Each `INSERT INTO` statement gets its own line in the `.sql` file in your text editor or jupyter notebook. Each line needs to end with a `;`. Run the file with the following code:
 
 ```python
 file = open("./01_insert_cats_into_cats_table.sql", 'r') # opens the SQL file

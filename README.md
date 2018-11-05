@@ -203,6 +203,13 @@ cursor.execute('''SELECT * FROM cats WHERE age < 2;''').fetchall()
 # select using WHERE clause here
 ```
 
+## Altering a Table
+
+We can also update a table like this:
+    ```cursor.execute('''ALTER TABLE cats ADD COLUMN notes text;''')```
+    
+The general pattern is ```ALTER TABLE table_name ADD COLUMN column_name column_type;```
+
 ## Updating Data
 
 Let's talk about updating, or changing, data in our table rows. We do this with the `UPDATE` keyword.

@@ -31,13 +31,16 @@ cursor = connection.cursor()
 
 Now that we have a database, let's create our `cats` table along with `id`, `name`, `age` and `breed` columns. Remember that we use our cursor to execute these SQL statements, and that the statements must be wrapped in quotes (`'''SQL statement GOES here'''`)
 
-```sql
+
+```python
+cursor.execute('''
 CREATE TABLE cats (
 	id INTEGER PRIMARY KEY,
 	name TEXT,
 	age INTEGER,
 	breed TEXT
-);
+)
+''')
 ```
 
 
@@ -93,7 +96,7 @@ Each `INSERT INTO` statement gets its own line in the `.sql` file in your text e
 ```python
 file = open("./01_insert_cats_into_cats_table.sql", 'r') # opens the SQL file
 sql = file.read() # reads and returns the SQL statements
-cursor.execute(sql) # executes the returned SQL statements and inserts the values into the table
+cursor.executescript(sql) # executes the returned SQL statements and inserts the values into the table
 file.close() # closes the file
 ```
 

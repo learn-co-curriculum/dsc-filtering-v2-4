@@ -3,274 +3,697 @@
 
 ## Introduction
 
-In this lesson, we'll cover different ways to manipulate and select data from SQL database tables including inserting, selecting, updating, and deleting database rows.
+Now that you've gotten a brief introduction to SQL, its time to get some hands on pratice connecting to a database via Python and executing to some queries.
 
 ## Objectives
 
 You will be able to:
 
 * Understand the basic structure of a `SELECT` statement in SQL
-* Use `INSERT INTO`, `UPDATE` and `DELETE` statements in SQL
-* Understand the relationship between SQL and relational databases
 
-## Setting Up Our Database
+## Connecting To a Database
 
-In this code along, we'll be creating a `cats` table in a `pets_database.db`. So, let's navigate to our terminal and get started.
-
-First let's create our `pets_database` by importing sqlite3 and running the following commands in our notebook.
+First let's connect to our database by importing sqlite3 and running the following commands in our notebook.
 ```python 
-import sqlite3 
-connection = sqlite3.connect('pets_database.db')
-cursor = connection.cursor()
+import sqlite3
+conn = sqlite3.connect('data.sqlite')
+c = conn.cursor()
 ```
 
 
 ```python
 # connect database and create cursor here
+import sqlite3 
+conn = sqlite3.connect('data.sqlite')
+c = conn.cursor()
 ```
 
-Now that we have a database, let's create our `cats` table along with `id`, `name`, `age` and `breed` columns. Remember that we use our cursor to execute these SQL statements, and that the statements must be wrapped in quotes (`'''SQL statement GOES here'''`)
+## Schema Overview
+
+The database that you're now connected to is the same as from the previous introduction. Here's an overview of the database:  
+
+<img src="images/Database-Schema.png">
+
+
+## Querying Via the Connection
+
+Now that you're connected to the database, let's take a look at how you can query the data within.
+
+With your cursor object, you can execute queries
 
 
 ```python
-cursor.execute('''
-CREATE TABLE cats (
-	id INTEGER PRIMARY KEY,
-	name TEXT,
-	age INTEGER,
-	breed TEXT
-)
-''')
+c.execute("""select * from employees limit 5;""")
 ```
 
 
-```python
-# create table here
-```
-
-Okay, let's start storing some cats.
-
-### Code Along I: INSERT INTO
-
-Next, to insert a record with values, type the following:
-
-```python
-cursor.execute('''INSERT INTO cats (name, age, breed) VALUES ('Maru', 3, 'Scottish Fold');''')
-```
 
 
-```python
-# insert Maru into the pet_database.db here
-```
-
-We use the `INSERT INTO` command, followed by the name of the table to which we want to add data. Then, in parentheses, we put the column names that we will be filling with data. This is followed by the `VALUES` keyword, which is accompanied by a parentheses enclosed list of the values that correspond to each column name.
-
-**Important:** Note that we *didn't specify* the "id" column name or value. Since we created the `cats` table with an "id" column whose type is `INTEGER PRIMARY KEY`, we don't have to specify the id column values when we insert data. Primary Key columns are auto-incrementing. As long as you have defined an id column with a data type of `INTEGER PRIMARY KEY`, a newly inserted row's id column will be automatically given the correct value.
-
-Let's add a few more cats to our table. To do this, we can (1) use our jupyter notebook by navigating to the **home** tab in our browser that is opened after running the `jupyter notebook` command in our command line (*or you can open a new tab and navigate to `localhost:8888`*), or we can (2) open our text editor (i.e. atom or sublime). We'll need to create a file, `01_insert_cats_into_cats_table.sql`. 
-
-To create a file with jupyter notebook, you will need to:
-1. Click the `new` button on the right of the page
-![new-file](click-new.png)
-2. Select `text file` from the drop-down menu
-![text-file](click-text.png)
-3. Click in the top right on `Untitled.txt` and rename the file appropriately
-![rename-file](rename-file.png)
-4. Enter the appropriate new file name and press `ok`
-![enter-name](enter-name.png)
-
-To create a text file via your text editor, you can simply enter the following command in your command line:
-
-> `touch 01_insert_cats_into_cats_table.sql`
-* **Note:** *you will need to be located inside the directory where this file should be created.*
-
-Once the `01_insert_cats_into_cats_table.sql` file is created, use two `INSERT INTO` statements to insert the following cats into the table:
-
-|name|age|breed|
-|----|---|-----|
-|"Lil\' Bub"|5|"American Shorthair"|
-|"Hannah"|1|"Tabby"|
-
-Each `INSERT INTO` statement gets its own line in the `.sql` file in your text editor or jupyter notebook. Each line needs to end with a `;`. Run the file with the following code:
-
-```python
-file = open("./01_insert_cats_into_cats_table.sql", 'r') # opens the SQL file
-sql = file.read() # reads and returns the SQL statements
-cursor.executescript(sql) # executes the returned SQL statements and inserts the values into the table
-file.close() # closes the file
-```
+    <sqlite3.Cursor at 0x1efebff5ea0>
 
 
-```python
-# execute the INSERT INTO statements here
-```
 
-Now, we'll learn how to `SELECT` data from a table, which will help us to confirm that we inserted the above data correctly.
-
-## Selecting Data
-
-Now that we've inserted some data into our `cats` table, we likely want to read that data. This is where the `SELECT` statement comes in. We use it to retrieve database data, or rows.
-
-### Code Along II: SELECT FROM
-
-A basic `SELECT` statement works like this:
-
-```sql
-SELECT [names of columns we are going to select] FROM [table we are selecting from];
-```
-
-We specify the names of the columns we want to SELECT and then tell SQL the table we want to select them FROM.
-
-We want to select all the rows in our table, and we want to return the data stored in any and all columns in those rows. To do this, we could pass the name of each column explicitly:
-
-```sql
-SELECT id, name, age, breed FROM cats;
-```
-
-Which should give us back:
-
-```bash
-1|Maru|3|Scottish Fold
-2|Lil\' Bub|5|American Shorthair
-3|Hannah|1|Tabby
-```
-
-A faster way to get data from every column in our table is to use a special selector, known commonly as the 'wildcard', `*` selector. The `*` selector means: "Give me all the data from all the columns for all of the cats" Using the wildcard, we can `SELECT` all the data from all of the columns in the cats table like this:
-
-```sql
-SELECT * FROM cats;
-```
-
-Now let's try out some more specific `SELECT` statements:
-
-#### Selecting by Column Names
-
-To select just certain columns from a table, use the following:
-
-```python
-cursor.execute('''SELECT name FROM cats;''').fetchall()
-```
-That should return the following:
-
-```python
-[('Maru',), ("Lil' Bub",), ('hannah',)]
-```
-
-You can even select more than one column name at a time. For example, try out:
-
-```python
-cursor.execute('''SELECT name, age FROM cats;''').fetchall()
-```
-
-
-**Top-Tip:** If you have duplicate data (for example, two cats with the same name) and you only want to select unique values, you can use the `DISTINCT` keyword. For example:
-
-```python
-cursor.execute('''SELECT DISTINCT name FROM cats;''').fetchall()
-```
-
-
-```python
-# select cats from database here
-```
-
-#### Selecting Based on Conditions: The `WHERE` Clause
-What happens when we want to retrieve a specific table row? For example the row that belongs to Maru? Or to retrieve all the baby cats who are younger than two years old? We can use the `WHERE` keyword to select data based on specific conditions. Here's an example of a boilerplate `SELECT` statement using a `WHERE` clause.
-
-```python
-cursor.execute('''SELECT * FROM [table name] WHERE [column name] = [some value];''').fetchall()
-```
-
-Let's retrieve *just Maru* from our `cats` table:
-
-```python
-cursor.execute('''SELECT * FROM cats WHERE name = "Maru";''').fetchall()
-```
-That statement should return the following:
-
-```python
-[(1, 'Maru', 3, 'Scottish Fold')]
-```
-
-We can also use comparison operators, like `<` or `>` to select specific data. Let's give it a shot. Use the following statement to select the young cats:
-
-```python
-cursor.execute('''SELECT * FROM cats WHERE age < 2;''').fetchall()
-```
-
-**Advanced:** The SQL statements we're learning here will eventually be used to integrate the applications you'll build with a database. For example, it's easy to imagine a web application that has many users. When a user signs into your app, you'll need to access your database and select the user that matches the credentials an individual is using to log in.
+The execute command itself only returns the cursor object. To see the results, you must use the fetchall method afterwards.
 
 
 
 ```python
-# select using WHERE clause here
+c.fetchall()
 ```
 
-## Altering a Table
-
-We can also update a table like this:
-    ```cursor.execute('''ALTER TABLE cats ADD COLUMN notes text;''')```
-    
-The general pattern is ```ALTER TABLE table_name ADD COLUMN column_name column_type;```
-
-## Updating Data
-
-Let's talk about updating, or changing, data in our table rows. We do this with the `UPDATE` keyword.
-
-### Code Along III: UPDATE
-
-A boilerplate `UPDATE` statement looks like this:
-
-```python
-cursor.execute('''UPDATE [table name] SET [column name] = [new value] WHERE [column name] = [value];''')
-```
-
-The `UPDATE` statement uses a `WHERE` clause to grab the row you want to update. It identifies the table name you are looking in and resets the data in a particular column to a new value.
-
-Let's update one of our cats. Turns out Maru's friend Hannah is actually Maru's friend *Hana*. Let's update that row to change the name to the correct spelling:
-
-```python
-cursor.execute('''UPDATE cats SET name = "Hana" WHERE name = "Hannah";''')
-```
-
-One last thing before we move on: deleting table rows.
 
 
 
-```python
-# update hannah here
-```
+    [('1002',
+      'Murphy',
+      'Diane',
+      'x5800',
+      'dmurphy@classicmodelcars.com',
+      '1',
+      '',
+      'President'),
+     ('1056',
+      'Patterson',
+      'Mary',
+      'x4611',
+      'mpatterso@classicmodelcars.com',
+      '1',
+      '1002',
+      'VP Sales'),
+     ('1076',
+      'Firrelli',
+      'Jeff',
+      'x9273',
+      'jfirrelli@classicmodelcars.com',
+      '1',
+      '1002',
+      'VP Marketing'),
+     ('1088',
+      'Patterson',
+      'William',
+      'x4871',
+      'wpatterson@classicmodelcars.com',
+      '6',
+      '1056',
+      'Sales Manager (APAC)'),
+     ('1102',
+      'Bondur',
+      'Gerard',
+      'x5408',
+      'gbondur@classicmodelcars.com',
+      '4',
+      '1056',
+      'Sale Manager (EMEA)')]
 
-## Deleting Data
 
-To delete table rows, we use the `DELETE` keyword.
 
-### Code Along IV: DELETE
+## Wrapping Results Into Pandas DataFrames
 
-A boilerplate `DELETE` statement looks like this:
-
-```python
-cursor.execute('''DELETE FROM [table name] WHERE [column name] = [value];''')
-```
-
-Let's go ahead and delete Lil' Bub from our `cats` table (sorry Lil' Bub):
-
-```python
-cursor.execute('''DELETE FROM cats WHERE id = 2;''')
-```
+Often, a more convenient output will be to turn these results into pandas DataFrames. To do this, you simply wrap the `c.fetchall()` output with a pandas DataFrame constructor:
 
 
 ```python
-# DELETE record with id=2 here
+import pandas as pd
 ```
 
-Notice that this time we selected the row to delete using the Primary Key column. Remember that every table row has a Primary Key column that is unique. Lil' Bub was the second row in the database and thus had an id of `2`.
 
-<p data-visibility='hidden'>View <a href='https://learn.co/lessons/sql-insert-select-update-code-along' title='Inserting, Selecting, Updating, and Deleting Database Rows'>Inserting, Selecting, Updating, and Deleting Database Rows</a> on Learn.co and start learning to code for free.</p>
+```python
+c.execute("""select * from employees limit 5;""")
+df = pd.DataFrame(c.fetchall())
+df.head()
+```
 
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+      <th>7</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1002</td>
+      <td>Murphy</td>
+      <td>Diane</td>
+      <td>x5800</td>
+      <td>dmurphy@classicmodelcars.com</td>
+      <td>1</td>
+      <td></td>
+      <td>President</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1056</td>
+      <td>Patterson</td>
+      <td>Mary</td>
+      <td>x4611</td>
+      <td>mpatterso@classicmodelcars.com</td>
+      <td>1</td>
+      <td>1002</td>
+      <td>VP Sales</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1076</td>
+      <td>Firrelli</td>
+      <td>Jeff</td>
+      <td>x9273</td>
+      <td>jfirrelli@classicmodelcars.com</td>
+      <td>1</td>
+      <td>1002</td>
+      <td>VP Marketing</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1088</td>
+      <td>Patterson</td>
+      <td>William</td>
+      <td>x4871</td>
+      <td>wpatterson@classicmodelcars.com</td>
+      <td>6</td>
+      <td>1056</td>
+      <td>Sales Manager (APAC)</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1102</td>
+      <td>Bondur</td>
+      <td>Gerard</td>
+      <td>x5408</td>
+      <td>gbondur@classicmodelcars.com</td>
+      <td>4</td>
+      <td>1056</td>
+      <td>Sale Manager (EMEA)</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+Sadly as you can see this is slightly clunky as we do not have the column names. Doing so is a bit clunky but here it is:
+
+
+```python
+c.execute("""select * from employees limit 5;""")
+df = pd.DataFrame(c.fetchall())
+df.columns = [x[0] for x in c.description]
+df.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>employeeNumber</th>
+      <th>lastName</th>
+      <th>firstName</th>
+      <th>extension</th>
+      <th>email</th>
+      <th>officeCode</th>
+      <th>reportsTo</th>
+      <th>jobTitle</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1002</td>
+      <td>Murphy</td>
+      <td>Diane</td>
+      <td>x5800</td>
+      <td>dmurphy@classicmodelcars.com</td>
+      <td>1</td>
+      <td></td>
+      <td>President</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1056</td>
+      <td>Patterson</td>
+      <td>Mary</td>
+      <td>x4611</td>
+      <td>mpatterso@classicmodelcars.com</td>
+      <td>1</td>
+      <td>1002</td>
+      <td>VP Sales</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1076</td>
+      <td>Firrelli</td>
+      <td>Jeff</td>
+      <td>x9273</td>
+      <td>jfirrelli@classicmodelcars.com</td>
+      <td>1</td>
+      <td>1002</td>
+      <td>VP Marketing</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1088</td>
+      <td>Patterson</td>
+      <td>William</td>
+      <td>x4871</td>
+      <td>wpatterson@classicmodelcars.com</td>
+      <td>6</td>
+      <td>1056</td>
+      <td>Sales Manager (APAC)</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1102</td>
+      <td>Bondur</td>
+      <td>Gerard</td>
+      <td>x5408</td>
+      <td>gbondur@classicmodelcars.com</td>
+      <td>4</td>
+      <td>1056</td>
+      <td>Sale Manager (EMEA)</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+## Additional Examples
+
+With that, let's take a look at a few more examples:
+
+### Selecting Customers From a Specific City
+
+
+```python
+c.execute("""select * from customers where city = 'Boston';""")
+df = pd.DataFrame(c.fetchall())
+df.columns = [x[0] for x in c.description]
+df
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>customerNumber</th>
+      <th>customerName</th>
+      <th>contactLastName</th>
+      <th>contactFirstName</th>
+      <th>phone</th>
+      <th>addressLine1</th>
+      <th>addressLine2</th>
+      <th>city</th>
+      <th>state</th>
+      <th>postalCode</th>
+      <th>country</th>
+      <th>salesRepEmployeeNumber</th>
+      <th>creditLimit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>362</td>
+      <td>Gifts4AllAges.com</td>
+      <td>Yoshido</td>
+      <td>Juri</td>
+      <td>6175559555</td>
+      <td>8616 Spinnaker Dr.</td>
+      <td></td>
+      <td>Boston</td>
+      <td>MA</td>
+      <td>51003</td>
+      <td>USA</td>
+      <td>1216</td>
+      <td>41900.00</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>495</td>
+      <td>Diecast Collectables</td>
+      <td>Franco</td>
+      <td>Valarie</td>
+      <td>6175552555</td>
+      <td>6251 Ingle Ln.</td>
+      <td></td>
+      <td>Boston</td>
+      <td>MA</td>
+      <td>51003</td>
+      <td>USA</td>
+      <td>1188</td>
+      <td>85100.00</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+### Selecting Multiple Cities
+
+
+```python
+c.execute("""select * from customers where city = 'Boston' or city = 'Madrid';""")
+df = pd.DataFrame(c.fetchall())
+df.columns = [x[0] for x in c.description]
+df
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>customerNumber</th>
+      <th>customerName</th>
+      <th>contactLastName</th>
+      <th>contactFirstName</th>
+      <th>phone</th>
+      <th>addressLine1</th>
+      <th>addressLine2</th>
+      <th>city</th>
+      <th>state</th>
+      <th>postalCode</th>
+      <th>country</th>
+      <th>salesRepEmployeeNumber</th>
+      <th>creditLimit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>141</td>
+      <td>Euro+ Shopping Channel</td>
+      <td>Freyre</td>
+      <td>Diego</td>
+      <td>(91) 555 94 44</td>
+      <td>C/ Moralzarzal, 86</td>
+      <td></td>
+      <td>Madrid</td>
+      <td></td>
+      <td>28034</td>
+      <td>Spain</td>
+      <td>1370</td>
+      <td>227600.00</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>237</td>
+      <td>ANG Resellers</td>
+      <td>Camino</td>
+      <td>Alejandra</td>
+      <td>(91) 745 6555</td>
+      <td>Gran Vía, 1</td>
+      <td></td>
+      <td>Madrid</td>
+      <td></td>
+      <td>28001</td>
+      <td>Spain</td>
+      <td></td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>344</td>
+      <td>CAF Imports</td>
+      <td>Fernandez</td>
+      <td>Jesus</td>
+      <td>+34 913 728 555</td>
+      <td>Merchants House</td>
+      <td>27-30 Merchant's Quay</td>
+      <td>Madrid</td>
+      <td></td>
+      <td>28023</td>
+      <td>Spain</td>
+      <td>1702</td>
+      <td>59600.00</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>362</td>
+      <td>Gifts4AllAges.com</td>
+      <td>Yoshido</td>
+      <td>Juri</td>
+      <td>6175559555</td>
+      <td>8616 Spinnaker Dr.</td>
+      <td></td>
+      <td>Boston</td>
+      <td>MA</td>
+      <td>51003</td>
+      <td>USA</td>
+      <td>1216</td>
+      <td>41900.00</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>458</td>
+      <td>Corrida Auto Replicas, Ltd</td>
+      <td>Sommer</td>
+      <td>Martín</td>
+      <td>(91) 555 22 82</td>
+      <td>C/ Araquil, 67</td>
+      <td></td>
+      <td>Madrid</td>
+      <td></td>
+      <td>28023</td>
+      <td>Spain</td>
+      <td>1702</td>
+      <td>104600.00</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>465</td>
+      <td>Anton Designs, Ltd.</td>
+      <td>Anton</td>
+      <td>Carmen</td>
+      <td>+34 913 728555</td>
+      <td>c/ Gobelas, 19-1 Urb. La Florida</td>
+      <td></td>
+      <td>Madrid</td>
+      <td></td>
+      <td>28023</td>
+      <td>Spain</td>
+      <td></td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>495</td>
+      <td>Diecast Collectables</td>
+      <td>Franco</td>
+      <td>Valarie</td>
+      <td>6175552555</td>
+      <td>6251 Ingle Ln.</td>
+      <td></td>
+      <td>Boston</td>
+      <td>MA</td>
+      <td>51003</td>
+      <td>USA</td>
+      <td>1188</td>
+      <td>85100.00</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+## The Where Clause
+
+In general, the where clause filters query results by some condition. As you are starting to see, you can also combine multiple conditions.
+
+### Selecting Specific Columns With a Complex Criteria
+
+
+```python
+c.execute("""select customerNumber, customerName, city, creditLimit
+             from customers
+             where (city = 'Boston' or city = 'Madrid')
+                   and (creditLimit >= 50000.00)
+             order by creditLimit desc
+             limit 15
+             ;""")
+df = pd.DataFrame(c.fetchall())
+df.columns = [x[0] for x in c.description]
+df
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>customerNumber</th>
+      <th>customerName</th>
+      <th>city</th>
+      <th>creditLimit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>495</td>
+      <td>Diecast Collectables</td>
+      <td>Boston</td>
+      <td>85100.00</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>344</td>
+      <td>CAF Imports</td>
+      <td>Madrid</td>
+      <td>59600.00</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>362</td>
+      <td>Gifts4AllAges.com</td>
+      <td>Boston</td>
+      <td>41900.00</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>141</td>
+      <td>Euro+ Shopping Channel</td>
+      <td>Madrid</td>
+      <td>227600.00</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>458</td>
+      <td>Corrida Auto Replicas, Ltd</td>
+      <td>Madrid</td>
+      <td>104600.00</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>237</td>
+      <td>ANG Resellers</td>
+      <td>Madrid</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>465</td>
+      <td>Anton Designs, Ltd.</td>
+      <td>Madrid</td>
+      <td>0.00</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+You might notice that the output of this query doesn't seem to respect our credit limit criterion. A little investigation shows that this is because the number is actually stored as a string! This is an annoying problem to encounter and also underlines the importance of setting up a database in an appropriate manner at the get go. For now, it's time to practice some of your sql querying skills!
+
+
+```python
+df.creditLimitditLimit.iloc[0]
+```
+
+
+
+
+    '85100.00'
+
+
+
+## The Order By and Limit Clauses
+
+Two additional keywords that you can use to refine your searches are the `ORDER BY` and `LIMIT` clauses. The order by clause allows you to sort the results by a particular feature. For example, you could sort by the `customerName` column if you wished to get results in alphabetical order. By default, `ORDER BY` is ascending. So, as with the above example, if you want the opposite, use the additional parameter `DESC`. Finally, the limit clause is typically the last argument in a SQL query and simply limits the output to a set number of results.
 
 ## Summary
 
-In this section, you learned different ways to manipulate and select data from SQL database tables including inserting, selecting, updating, and deleting database rows.
-
-
+In this lesson, you saw how to connect to a SQL database via python and how to subsequently execute queries against that database. Going forward, you'll continue to learn additional keywords for specifying your query parameters!

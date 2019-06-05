@@ -577,7 +577,7 @@ df
 
 In general, the where clause filters query results by some condition. As you are starting to see, you can also combine multiple conditions.
 
-### Selecting Specific Columns With a Complex Criteria
+### Selecting Specific Columns With Complex Criteria
 
 
 ```python

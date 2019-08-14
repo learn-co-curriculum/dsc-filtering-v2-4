@@ -114,65 +114,21 @@ It's also possible to combine the previous two cells into one line, like so:
 ```python
 ## Uncomment cell to display contents:
 
-# cur.execute("""SELECT * FROM employees LIMIT 5;""").fetchall()[:1]
+# cur.execute("""SELECT * FROM employees LIMIT 5;""").fetchall()
 ```
 
 ### Quick note on formatting syntax:
 
-When working with strings, you may have previously seen a `'string'`, a `"string"`, a `'''string'''`, or a `"""string"""`. While all of these are strings, the triple quotes have the added functionality of being able to use multiple lines within the same string. Sometimes, SQL queries can be much longer than others, in which case it's helpful to use new lines for readability. Here's an example:
+When working with strings, you may have previously seen a `'string'`, a `"string"`, a `'''string'''`, or a `"""string"""`. While all of these are strings, the triple quotes have the added functionality of being able to use multiple lines within the same string. Sometimes, SQL queries can be much longer than others, in which case it's helpful to use new lines for readability. Here's a short example:
 
 
 ```python
-cur.execute("""SELECT * 
-               FROM employees 
-               LIMIT 5;""").fetchall()
+## Uncomment cell to display contents:
+
+# cur.execute("""SELECT * 
+#                FROM employees 
+#                LIMIT 5;""").fetchall()
 ```
-
-
-
-
-    [('1002',
-      'Murphy',
-      'Diane',
-      'x5800',
-      'dmurphy@classicmodelcars.com',
-      '1',
-      '',
-      'President'),
-     ('1056',
-      'Patterson',
-      'Mary',
-      'x4611',
-      'mpatterso@classicmodelcars.com',
-      '1',
-      '1002',
-      'VP Sales'),
-     ('1076',
-      'Firrelli',
-      'Jeff',
-      'x9273',
-      'jfirrelli@classicmodelcars.com',
-      '1',
-      '1002',
-      'VP Marketing'),
-     ('1088',
-      'Patterson',
-      'William',
-      'x4871',
-      'wpatterson@classicmodelcars.com',
-      '6',
-      '1056',
-      'Sales Manager (APAC)'),
-     ('1102',
-      'Bondur',
-      'Gerard',
-      'x5408',
-      'gbondur@classicmodelcars.com',
-      '4',
-      '1056',
-      'Sale Manager (EMEA)')]
-
-
 
 ## Wrapping Results Into Pandas DataFrames
 

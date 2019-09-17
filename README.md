@@ -3,7 +3,7 @@
 
 ## Introduction
 
-Now that you've gotten a brief introduction to SQL, its time to get some hands on practice connecting to a database via Python and executing to some queries.
+Now that you've gotten a brief introduction to SQL, its time to get some hands-on practice connecting to a database via Python and executing some queries.
 
 ## Objectives
 
@@ -11,9 +11,9 @@ You will be able to:
 
 * Understand the basic structure of a `SELECT` statement in SQL
 
-## Connecting To a Database
+## Connecting to a Database
 
-First let's connect to our database by importing sqlite3 and running the following cell in our notebook. You'll need a cursor object (`cur`) to fetch results. Cursor objects allow you to keep track of which result set is which, since it's possible to run multiple queries before you're done fetching the results of the first.
+First, let's connect to our database by importing sqlite3 and running the following cell in our notebook. You'll need a cursor object (`cur`) to fetch results. Cursor objects allow you to keep track of which result set is which since it's possible to run multiple queries before you're done fetching the results of the first.
 
 ```python 
 import sqlite3
@@ -716,7 +716,7 @@ type(df.creditLimit.iloc[0])
 
 
 
-This is an annoying problem to encounter and also underlines the importance of setting up a database in an appropriate manner at the get go. For now, it's time to practice some of your SQL querying skills!
+This is an annoying problem to encounter and also underlines the importance of setting up a database in an appropriate manner at the get-go. For now, it's time to practice some of your SQL querying skills!
 
 ## Summary
 

@@ -9,7 +9,8 @@ Now that you've gotten a brief introduction to SQL, its time to get some hands-o
 
 You will be able to:
 * Connect to a SQL database using Python
-* Retrieve a subset of records from a table using a WHERE clause
+* Retrieve all information from a SQL table
+* Retrieve a subset of records from a table using a `WHERE` clause
 * Write SQL queries to filter and order results
 * Retrieve a subset of columns from a table
 

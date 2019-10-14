@@ -8,8 +8,10 @@ Now that you've gotten a brief introduction to SQL, its time to get some hands-o
 ## Objectives
 
 You will be able to:
-
-* Understand the basic structure of a `SELECT` statement in SQL
+* Connect to a SQL database using Python
+* Retrieve a subset of records from a table using a WHERE clause
+* Write SQL queries to filter and order results
+* Retrieve a subset of columns from a table
 
 ## Connecting to a Database
 
@@ -50,7 +52,7 @@ cur.execute("""SELECT * FROM employees LIMIT 5;""")
 
 
 
-    <sqlite3.Cursor at 0x1114f4ab0>
+    <sqlite3.Cursor at 0x111deb420>
 
 
 
@@ -348,7 +350,7 @@ df.head()
 
 ## The Where Clause
 
-In general, the where clause filters query results by some condition. As you are starting to see, you can also combine multiple conditions.
+In general, the `WHERE` clause filters query results by some condition. As you are starting to see, you can also combine multiple conditions.
 
 ### Selecting Customers From a Specific City
 
@@ -720,4 +722,4 @@ This is an annoying problem to encounter and also underlines the importance of s
 
 ## Summary
 
-In this lesson, you saw how to connect to a SQL database via python and how to subsequently execute queries against that database. Going forward, you'll continue to learn additional keywords for specifying your query parameters!
+In this lesson, you saw how to connect to a SQL database via Python and how to subsequently execute queries against that database. Going forward, you'll continue to learn additional keywords for specifying your query parameters!

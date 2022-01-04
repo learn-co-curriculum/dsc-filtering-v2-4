@@ -1,337 +1,35 @@
-# Selecting Data
+# Filtering Data with SQL
 
 ## Introduction
 
-As a data scientist, the SQL query you'll likely use most often is `SELECT`. This lesson introduces how to use `SELECT` to subset and transform the columns of a database table.
+After `SELECT` and `FROM`, the next SQL clause you're most likely to use as a data scientist is `WHERE`.
+
+With just a `SELECT` expression, we can specify which **columns** we want to select, as well as transform the column values using aliases, built-in functions, and other expressions.
+
+However if we want to filter the **rows** that we want to select, we also need to include a `WHERE` clause.
 
 ## Objectives
 
 You will be able to:
-- Retrieve a subset of columns from a table
-- Use built-in SQL functions to transform selected columns
-- Retrieve a subset of records from a table using a basic `WHERE` clause
+- Retrieve a subset of records from a table using a `WHERE` clause
+- Filter results using conditional operators such as `BETWEEN`, `IS NULL`, and `LIKE`
+- Apply an aggregate function to the result of a filtered query
 
-## The Data
+## Introduction to the `WHERE` Clause
 
-Below, we connect to a SQLite database using the Python `sqlite3` library ([documentation here](https://docs.python.org/3/library/sqlite3.html)):
-
-
-```python
-import sqlite3 
-conn = sqlite3.connect('data.sqlite')
-```
-
-The database that you've just connected to is the same database you have seen previously, containing data about orders, employeers, etc. Here's an overview of the database:  
+For this section of the lesson, we'll use the Northwind database, the ERD (entity-relationship diagram) of which is shown below:  
 
 <img src="images/Database-Schema.png">
 
-For this first section we'll be focusing on the `employees` table.
+### Northwind Data
 
-If we want to get all information about the employee records, we might do something like this (`*` means all columns):
+Below, we connect to a SQLite database using the Python `sqlite3` library ([documentation here](https://docs.python.org/3/library/sqlite3.html)), then display the contents of the `employees` table:
 
 
 ```python
 import pandas as pd
-pd.read_sql("""SELECT * FROM employees;""", conn)
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>employeeNumber</th>
-      <th>lastName</th>
-      <th>firstName</th>
-      <th>extension</th>
-      <th>email</th>
-      <th>officeCode</th>
-      <th>reportsTo</th>
-      <th>jobTitle</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1002</td>
-      <td>Murphy</td>
-      <td>Diane</td>
-      <td>x5800</td>
-      <td>dmurphy@classicmodelcars.com</td>
-      <td>1</td>
-      <td></td>
-      <td>President</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>1056</td>
-      <td>Patterson</td>
-      <td>Mary</td>
-      <td>x4611</td>
-      <td>mpatterso@classicmodelcars.com</td>
-      <td>1</td>
-      <td>1002</td>
-      <td>VP Sales</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>1076</td>
-      <td>Firrelli</td>
-      <td>Jeff</td>
-      <td>x9273</td>
-      <td>jfirrelli@classicmodelcars.com</td>
-      <td>1</td>
-      <td>1002</td>
-      <td>VP Marketing</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>1088</td>
-      <td>Patterson</td>
-      <td>William</td>
-      <td>x4871</td>
-      <td>wpatterson@classicmodelcars.com</td>
-      <td>6</td>
-      <td>1056</td>
-      <td>Sales Manager (APAC)</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>1102</td>
-      <td>Bondur</td>
-      <td>Gerard</td>
-      <td>x5408</td>
-      <td>gbondur@classicmodelcars.com</td>
-      <td>4</td>
-      <td>1056</td>
-      <td>Sale Manager (EMEA)</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>1143</td>
-      <td>Bow</td>
-      <td>Anthony</td>
-      <td>x5428</td>
-      <td>abow@classicmodelcars.com</td>
-      <td>1</td>
-      <td>1056</td>
-      <td>Sales Manager (NA)</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>1165</td>
-      <td>Jennings</td>
-      <td>Leslie</td>
-      <td>x3291</td>
-      <td>ljennings@classicmodelcars.com</td>
-      <td>1</td>
-      <td>1143</td>
-      <td>Sales Rep</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>1166</td>
-      <td>Thompson</td>
-      <td>Leslie</td>
-      <td>x4065</td>
-      <td>lthompson@classicmodelcars.com</td>
-      <td>1</td>
-      <td>1143</td>
-      <td>Sales Rep</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>1188</td>
-      <td>Firrelli</td>
-      <td>Julie</td>
-      <td>x2173</td>
-      <td>jfirrelli@classicmodelcars.com</td>
-      <td>2</td>
-      <td>1143</td>
-      <td>Sales Rep</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>1216</td>
-      <td>Patterson</td>
-      <td>Steve</td>
-      <td>x4334</td>
-      <td>spatterson@classicmodelcars.com</td>
-      <td>2</td>
-      <td>1143</td>
-      <td>Sales Rep</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>1286</td>
-      <td>Tseng</td>
-      <td>Foon Yue</td>
-      <td>x2248</td>
-      <td>ftseng@classicmodelcars.com</td>
-      <td>3</td>
-      <td>1143</td>
-      <td>Sales Rep</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>1323</td>
-      <td>Vanauf</td>
-      <td>George</td>
-      <td>x4102</td>
-      <td>gvanauf@classicmodelcars.com</td>
-      <td>3</td>
-      <td>1143</td>
-      <td>Sales Rep</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>1337</td>
-      <td>Bondur</td>
-      <td>Loui</td>
-      <td>x6493</td>
-      <td>lbondur@classicmodelcars.com</td>
-      <td>4</td>
-      <td>1102</td>
-      <td>Sales Rep</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>1370</td>
-      <td>Hernandez</td>
-      <td>Gerard</td>
-      <td>x2028</td>
-      <td>ghernande@classicmodelcars.com</td>
-      <td>4</td>
-      <td>1102</td>
-      <td>Sales Rep</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>1401</td>
-      <td>Castillo</td>
-      <td>Pamela</td>
-      <td>x2759</td>
-      <td>pcastillo@classicmodelcars.com</td>
-      <td>4</td>
-      <td>1102</td>
-      <td>Sales Rep</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>1501</td>
-      <td>Bott</td>
-      <td>Larry</td>
-      <td>x2311</td>
-      <td>lbott@classicmodelcars.com</td>
-      <td>7</td>
-      <td>1102</td>
-      <td>Sales Rep</td>
-    </tr>
-    <tr>
-      <th>16</th>
-      <td>1504</td>
-      <td>Jones</td>
-      <td>Barry</td>
-      <td>x102</td>
-      <td>bjones@classicmodelcars.com</td>
-      <td>7</td>
-      <td>1102</td>
-      <td>Sales Rep</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>1611</td>
-      <td>Fixter</td>
-      <td>Andy</td>
-      <td>x101</td>
-      <td>afixter@classicmodelcars.com</td>
-      <td>6</td>
-      <td>1088</td>
-      <td>Sales Rep</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>1612</td>
-      <td>Marsh</td>
-      <td>Peter</td>
-      <td>x102</td>
-      <td>pmarsh@classicmodelcars.com</td>
-      <td>6</td>
-      <td>1088</td>
-      <td>Sales Rep</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>1619</td>
-      <td>King</td>
-      <td>Tom</td>
-      <td>x103</td>
-      <td>tking@classicmodelcars.com</td>
-      <td>6</td>
-      <td>1088</td>
-      <td>Sales Rep</td>
-    </tr>
-    <tr>
-      <th>20</th>
-      <td>1621</td>
-      <td>Nishi</td>
-      <td>Mami</td>
-      <td>x101</td>
-      <td>mnishi@classicmodelcars.com</td>
-      <td>5</td>
-      <td>1056</td>
-      <td>Sales Rep</td>
-    </tr>
-    <tr>
-      <th>21</th>
-      <td>1625</td>
-      <td>Kato</td>
-      <td>Yoshimi</td>
-      <td>x102</td>
-      <td>ykato@classicmodelcars.com</td>
-      <td>5</td>
-      <td>1621</td>
-      <td>Sales Rep</td>
-    </tr>
-    <tr>
-      <th>22</th>
-      <td>1702</td>
-      <td>Gerard</td>
-      <td>Martin</td>
-      <td>x2312</td>
-      <td>mgerard@classicmodelcars.com</td>
-      <td>4</td>
-      <td>1102</td>
-      <td>Sales Rep</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-### Quick Note on String Syntax
-
-When working with strings, you may have previously seen a `'string'`, a `"string"`, a `'''string'''`, or a `"""string"""`. While all of these are strings, the triple quotes have the added functionality of being able to use multiple lines within the same string as well as to use single quotes within the string. Sometimes, SQL queries can be much longer than others, in which case it's helpful to use new lines for readability. Here's the same example, this time with the string spread out onto multiple lines:
-
-
-```python
+import sqlite3 
+conn = sqlite3.connect('data.sqlite')
 pd.read_sql("""
 SELECT *
   FROM employees;
@@ -629,38 +327,15 @@ SELECT *
 
 
 
-Unlike in Python, whitespace indentation in SQL is not used to indicate scope or any other important information. Therefore this:
-
-```sql
-SELECT *
-  FROM employees;
-```
-
-(with two spaces in front of `FROM`)
-
-is identical to this:
-
-```sql
-SELECT *
-FROM employees;
-```
-
-(with zero spaces in front of `FROM`)
-
-as far as SQL is concerned. However we will be aligning the right edge of the SQL keywords, using a "river" of whitespace down the center to improve legibility in this lesson, following [this style guide](https://www.sqlstyle.guide/). You will see multi-line SQL written with various different indentation styles, and you will want to check with your employer to learn what their style guide is.
-
-## Retrieving a Subset of Columns
-
-Once we know what the column names are for a given table, we can select specific columns rather than using `*` to select all of them. This is achieved by replacing the `*` with the names of the columns, separated by commas.
-
-For example, if we just wanted to select the last and first names of the employees:
+When filtering data using `WHERE`, you are trying to find rows that match a specific condition. The simplest condition involves checking whether a specific column contains a specific value. In SQLite, this is done using `=`, which is similar to `==` in Python:
 
 
 ```python
 pd.read_sql("""
-SELECT lastName, firstName
-  FROM employees;
-""", conn).head()
+SELECT *
+  FROM employees
+ WHERE lastName = "Patterson";
+""", conn)
 ```
 
 
@@ -684,649 +359,158 @@ SELECT lastName, firstName
   <thead>
     <tr style="text-align: right;">
       <th></th>
+      <th>employeeNumber</th>
       <th>lastName</th>
       <th>firstName</th>
+      <th>extension</th>
+      <th>email</th>
+      <th>officeCode</th>
+      <th>reportsTo</th>
+      <th>jobTitle</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>Murphy</td>
-      <td>Diane</td>
-    </tr>
-    <tr>
-      <th>1</th>
+      <td>1056</td>
       <td>Patterson</td>
       <td>Mary</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Firrelli</td>
-      <td>Jeff</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>Patterson</td>
-      <td>William</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>Bondur</td>
-      <td>Gerard</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-We can also specify the columns in a different order than they appear in the database, in order to reorder the columns in the resulting dataframe:
-
-
-```python
-pd.read_sql("""
-SELECT firstName, lastName
-  FROM employees;
-""", conn).head()
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>firstName</th>
-      <th>lastName</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Diane</td>
-      <td>Murphy</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Mary</td>
-      <td>Patterson</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Jeff</td>
-      <td>Firrelli</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>William</td>
-      <td>Patterson</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>Gerard</td>
-      <td>Bondur</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-Additionally, we can use aliases (`AS` keyword) to change the column names in our query result:
-
-
-```python
-pd.read_sql("""
-SELECT firstName AS name
-  FROM employees;
-""", conn).head()
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>name</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Diane</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Mary</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Jeff</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>William</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>Gerard</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-## Using Built-in SQL Functions
-
-Similar to the [Python built-in functions](https://docs.python.org/3/library/functions.html), SQL also has built-in functions. The available functions will differ somewhat by the type of SQL you are using, but in general you should be able to find functions for:
-
-* String manipulation
-* Math operations
-* Date and time operations
-
-For SQLite in particular, if you are looking for a built-in function, start by checking the [core functions](https://www.sqlite.org/lang_corefunc.html) page, [mathematical functions](https://www.sqlite.org/lang_mathfunc.html) page, and/or [date and time functions](https://www.sqlite.org/lang_datefunc.html) page.
-
-### Built-in SQL Functions for String Manipulation
-
-#### `length`
-
-Let's start with an example of a SQL built-in function that is very similar to one we have in Python: `length` ([documentation here](https://www.sqlite.org/lang_corefunc.html#length)). This works very similarly to the `len` built-in function in Python. For a string, it returns the number of characters.
-
-If we wanted to find the length of the first names of all employees, that would look like this:
-
-
-```python
-pd.read_sql("""
-SELECT length(firstName) AS name_length
-  FROM employees;
-""", conn).head()
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>name_length</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>5</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>7</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>6</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-#### `upper`
-
-Now let's say we wanted to return all of the employee names in all caps. Similar to the Python string method, this SQL function is called `upper` ([documentation here](https://www.sqlite.org/lang_corefunc.html#upper)). However, since it's a built-in function and not a method, the syntax looks like:
-
-```sql
-upper(column_name)
-```
-
-and not `column_name.upper()`.
-
-As you get more comfortable with Python and SQL, distinctions like this will get more intuitive, but for now don't worry if you have to look it up every time!
-
-Here is an example using `upper`:
-
-
-```python
-pd.read_sql("""
-SELECT upper(firstName) AS name_in_all_caps
-  FROM employees;
-""", conn).head()
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>name_in_all_caps</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>DIANE</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>MARY</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>JEFF</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>WILLIAM</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>GERARD</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-#### `substr`
-
-Another form of string manipulation you might need is finding a substring (subset of a string). In Python, we do this with string slicing. In SQL, there is a built-in function that does this instead. For SQLite specifically, this is called `substr` ([documentation here](https://www.sqlite.org/lang_corefunc.html#substr)).
-
-Let's say we wanted just the first initial (first letter of the first name) for each employee:
-
-
-```python
-pd.read_sql("""
-SELECT substr(firstName, 1, 1) AS first_initial
-  FROM employees;
-""", conn).head()
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>first_initial</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>D</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>M</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>J</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>W</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>G</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-If we wanted to add a `.` after each first initial, we could use the SQLite `||` (concatenate) operator. This works similarly to `+` with strings in Python:
-
-
-```python
-pd.read_sql("""
-SELECT substr(firstName, 1, 1) || "." AS first_initial
-  FROM employees;
-""", conn).head()
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>first_initial</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>D.</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>M.</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>J.</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>W.</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>G.</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-We can also combine multiple column values, not just string literals. For example:
-
-
-```python
-pd.read_sql("""
-SELECT firstName || " " || lastName AS full_name
-  FROM employees;
-""", conn).head()
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>full_name</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Diane Murphy</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Mary Patterson</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Jeff Firrelli</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>William Patterson</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>Gerard Bondur</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-### Built-in SQL Functions for Math Operations
-
-For these examples, let's switch over to using the `orderDetails` table:
-
-
-```python
-pd.read_sql("""SELECT * FROM orderDetails;""", conn)
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>orderNumber</th>
-      <th>productCode</th>
-      <th>quantityOrdered</th>
-      <th>priceEach</th>
-      <th>orderLineNumber</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>10100</td>
-      <td>S18_1749</td>
-      <td>30</td>
-      <td>136.00</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>10100</td>
-      <td>S18_2248</td>
-      <td>50</td>
-      <td>55.09</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>10100</td>
-      <td>S18_4409</td>
-      <td>22</td>
-      <td>75.46</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>10100</td>
-      <td>S24_3969</td>
-      <td>49</td>
-      <td>35.29</td>
+      <td>x4611</td>
+      <td>mpatterso@classicmodelcars.com</td>
       <td>1</td>
+      <td>1002</td>
+      <td>VP Sales</td>
     </tr>
     <tr>
-      <th>4</th>
-      <td>10101</td>
-      <td>S18_2325</td>
-      <td>25</td>
-      <td>108.06</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>2991</th>
-      <td>10425</td>
-      <td>S24_2300</td>
-      <td>49</td>
-      <td>127.79</td>
-      <td>9</td>
-    </tr>
-    <tr>
-      <th>2992</th>
-      <td>10425</td>
-      <td>S24_2840</td>
-      <td>31</td>
-      <td>31.82</td>
-      <td>5</td>
-    </tr>
-    <tr>
-      <th>2993</th>
-      <td>10425</td>
-      <td>S32_1268</td>
-      <td>41</td>
-      <td>83.79</td>
-      <td>11</td>
-    </tr>
-    <tr>
-      <th>2994</th>
-      <td>10425</td>
-      <td>S32_2509</td>
-      <td>11</td>
-      <td>50.32</td>
+      <th>1</th>
+      <td>1088</td>
+      <td>Patterson</td>
+      <td>William</td>
+      <td>x4871</td>
+      <td>wpatterson@classicmodelcars.com</td>
       <td>6</td>
+      <td>1056</td>
+      <td>Sales Manager (APAC)</td>
     </tr>
     <tr>
-      <th>2995</th>
-      <td>10425</td>
-      <td>S50_1392</td>
-      <td>18</td>
-      <td>94.92</td>
+      <th>2</th>
+      <td>1216</td>
+      <td>Patterson</td>
+      <td>Steve</td>
+      <td>x4334</td>
+      <td>spatterson@classicmodelcars.com</td>
       <td>2</td>
+      <td>1143</td>
+      <td>Sales Rep</td>
     </tr>
   </tbody>
 </table>
-<p>2996 rows × 5 columns</p>
 </div>
 
 
 
-#### `round`
+Note that we are selecting all columns (`SELECT *`) but are no longer selecting all rows. Instead, we are only selecting the 3 rows where the value of `lastName` is "Patterson".
 
-Let's say we wanted to round the price to the nearest dollar. We could use the SQL `round` function ([documentation here](https://www.sqlite.org/lang_corefunc.html#round)), which is very similar to the the Python `round`:
+SQL is essentially doing something like this:
+
+
+```python
+# Selecting all of the records in the database
+result = pd.read_sql("SELECT * FROM employees;", conn)
+# Create a list to store the records that match the query
+employees_named_patterson = []
+# Loop over all of the employees
+for _, data in result.iterrows():
+    # Check if the last name is "Patterson"
+    if data["lastName"] == "Patterson":
+        # Add to list
+        employees_named_patterson.append(data)
+
+# Display the result list as a DataFrame
+pd.DataFrame(employees_named_patterson)
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>employeeNumber</th>
+      <th>lastName</th>
+      <th>firstName</th>
+      <th>extension</th>
+      <th>email</th>
+      <th>officeCode</th>
+      <th>reportsTo</th>
+      <th>jobTitle</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>1056</td>
+      <td>Patterson</td>
+      <td>Mary</td>
+      <td>x4611</td>
+      <td>mpatterso@classicmodelcars.com</td>
+      <td>1</td>
+      <td>1002</td>
+      <td>VP Sales</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1088</td>
+      <td>Patterson</td>
+      <td>William</td>
+      <td>x4871</td>
+      <td>wpatterson@classicmodelcars.com</td>
+      <td>6</td>
+      <td>1056</td>
+      <td>Sales Manager (APAC)</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>1216</td>
+      <td>Patterson</td>
+      <td>Steve</td>
+      <td>x4334</td>
+      <td>spatterson@classicmodelcars.com</td>
+      <td>2</td>
+      <td>1143</td>
+      <td>Sales Rep</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+Except SQL is designed specifically to perform these kinds of queries efficiently! **Even if you are pulling data from SQL into Python for further analysis, `SELECT * FROM <table>;` is very rarely the most efficient approach.** You should be thinking about how to get SQL to do the "heavy lifting" for you in terms of selecting, filtering, and transforming the raw data!
+
+You can also combine `WHERE` clauses with `SELECT` statements other than `SELECT *` in order to filter rows and columns at the same time. For example:
 
 
 ```python
 pd.read_sql("""
-SELECT round(priceEach) AS rounded_price
-  FROM orderDetails;
+SELECT firstName, lastName, email
+  FROM employees
+ WHERE lastName = "Patterson";
 """, conn)
 ```
 
@@ -1351,798 +535,37 @@ SELECT round(priceEach) AS rounded_price
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>rounded_price</th>
+      <th>firstName</th>
+      <th>lastName</th>
+      <th>email</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>136.0</td>
+      <td>Mary</td>
+      <td>Patterson</td>
+      <td>mpatterso@classicmodelcars.com</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>55.0</td>
+      <td>William</td>
+      <td>Patterson</td>
+      <td>wpatterson@classicmodelcars.com</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>75.0</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>35.0</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>108.0</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>2991</th>
-      <td>128.0</td>
-    </tr>
-    <tr>
-      <th>2992</th>
-      <td>32.0</td>
-    </tr>
-    <tr>
-      <th>2993</th>
-      <td>84.0</td>
-    </tr>
-    <tr>
-      <th>2994</th>
-      <td>50.0</td>
-    </tr>
-    <tr>
-      <th>2995</th>
-      <td>95.0</td>
+      <td>Steve</td>
+      <td>Patterson</td>
+      <td>spatterson@classicmodelcars.com</td>
     </tr>
   </tbody>
 </table>
-<p>2996 rows × 1 columns</p>
 </div>
 
 
 
-#### `CAST`
-
-The previous result looks ok, but it's returning floating point numbers. What if we want integers instead?
-
-In Python, we might apply the `int` built-in function. In SQLite, we can use a `CAST` expression ([documentation here](https://www.sqlite.org/lang_expr.html#castexpr)):
-
-
-```python
-pd.read_sql("""
-SELECT CAST(round(priceEach) AS INTEGER) AS rounded_price_int
-  FROM orderDetails;
-""", conn)
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>rounded_price_int</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>136</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>55</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>75</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>35</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>108</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>2991</th>
-      <td>128</td>
-    </tr>
-    <tr>
-      <th>2992</th>
-      <td>32</td>
-    </tr>
-    <tr>
-      <th>2993</th>
-      <td>84</td>
-    </tr>
-    <tr>
-      <th>2994</th>
-      <td>50</td>
-    </tr>
-    <tr>
-      <th>2995</th>
-      <td>95</td>
-    </tr>
-  </tbody>
-</table>
-<p>2996 rows × 1 columns</p>
-</div>
-
-
-
-#### Basic Math Operations
-
-Just like when performing math operations with Python, you don't always need to use a function. Sometimes all you need is an operator like `+`, `-`, `/`, or `*`. For example, below we multiply the price times the quantity ordered to find the total price:
-
-
-```python
-pd.read_sql("""
-SELECT priceEach * quantityOrdered AS total_price
-  FROM orderDetails;
-""", conn)
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>total_price</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>4080.00</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>2754.50</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>1660.12</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>1729.21</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>2701.50</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>2991</th>
-      <td>6261.71</td>
-    </tr>
-    <tr>
-      <th>2992</th>
-      <td>986.42</td>
-    </tr>
-    <tr>
-      <th>2993</th>
-      <td>3435.39</td>
-    </tr>
-    <tr>
-      <th>2994</th>
-      <td>553.52</td>
-    </tr>
-    <tr>
-      <th>2995</th>
-      <td>1708.56</td>
-    </tr>
-  </tbody>
-</table>
-<p>2996 rows × 1 columns</p>
-</div>
-
-
-
-### Built-in SQL Functions for Date and Time Operations
-
-For these examples, we'll look at yet another table within the database, this time the `orders` table:
-
-
-```python
-pd.read_sql("""SELECT * FROM orders;""", conn)
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>orderNumber</th>
-      <th>orderDate</th>
-      <th>requiredDate</th>
-      <th>shippedDate</th>
-      <th>status</th>
-      <th>comments</th>
-      <th>customerNumber</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>10100</td>
-      <td>2003-01-06</td>
-      <td>2003-01-13</td>
-      <td>2003-01-10</td>
-      <td>Shipped</td>
-      <td></td>
-      <td>363</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>10101</td>
-      <td>2003-01-09</td>
-      <td>2003-01-18</td>
-      <td>2003-01-11</td>
-      <td>Shipped</td>
-      <td>Check on availability.</td>
-      <td>128</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>10102</td>
-      <td>2003-01-10</td>
-      <td>2003-01-18</td>
-      <td>2003-01-14</td>
-      <td>Shipped</td>
-      <td></td>
-      <td>181</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>10103</td>
-      <td>2003-01-29</td>
-      <td>2003-02-07</td>
-      <td>2003-02-02</td>
-      <td>Shipped</td>
-      <td></td>
-      <td>121</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>10104</td>
-      <td>2003-01-31</td>
-      <td>2003-02-09</td>
-      <td>2003-02-01</td>
-      <td>Shipped</td>
-      <td></td>
-      <td>141</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>321</th>
-      <td>10421</td>
-      <td>2005-05-29</td>
-      <td>2005-06-06</td>
-      <td></td>
-      <td>In Process</td>
-      <td>Custom shipping instructions were sent to ware...</td>
-      <td>124</td>
-    </tr>
-    <tr>
-      <th>322</th>
-      <td>10422</td>
-      <td>2005-05-30</td>
-      <td>2005-06-11</td>
-      <td></td>
-      <td>In Process</td>
-      <td></td>
-      <td>157</td>
-    </tr>
-    <tr>
-      <th>323</th>
-      <td>10423</td>
-      <td>2005-05-30</td>
-      <td>2005-06-05</td>
-      <td></td>
-      <td>In Process</td>
-      <td></td>
-      <td>314</td>
-    </tr>
-    <tr>
-      <th>324</th>
-      <td>10424</td>
-      <td>2005-05-31</td>
-      <td>2005-06-08</td>
-      <td></td>
-      <td>In Process</td>
-      <td></td>
-      <td>141</td>
-    </tr>
-    <tr>
-      <th>325</th>
-      <td>10425</td>
-      <td>2005-05-31</td>
-      <td>2005-06-07</td>
-      <td></td>
-      <td>In Process</td>
-      <td></td>
-      <td>119</td>
-    </tr>
-  </tbody>
-</table>
-<p>326 rows × 7 columns</p>
-</div>
-
-
-
-What if we wanted to know how many days there are between the `requiredDate` and the `orderDate` for each order? Intuitively you might try something like this:
-
-
-```python
-pd.read_sql("""
-SELECT requiredDate - orderDate
-  FROM orders;
-""", conn)
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>requiredDate - orderDate</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>321</th>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>322</th>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>323</th>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>324</th>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>325</th>
-      <td>0</td>
-    </tr>
-  </tbody>
-</table>
-<p>326 rows × 1 columns</p>
-</div>
-
-
-
-Clearly that didn't work.
-
-It turns out that we need to specify that we want the difference in *days*. One way to do this is using the `julianday` function ([documentation here](https://www.sqlite.org/lang_datefunc.html)):
-
-
-```python
-pd.read_sql("""
-SELECT julianday(requiredDate) - julianday(orderDate) AS days_from_order_to_required
-  FROM orders;
-""", conn)
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>days_from_order_to_required</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>7.0</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>9.0</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>8.0</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>9.0</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>9.0</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>321</th>
-      <td>8.0</td>
-    </tr>
-    <tr>
-      <th>322</th>
-      <td>12.0</td>
-    </tr>
-    <tr>
-      <th>323</th>
-      <td>6.0</td>
-    </tr>
-    <tr>
-      <th>324</th>
-      <td>8.0</td>
-    </tr>
-    <tr>
-      <th>325</th>
-      <td>7.0</td>
-    </tr>
-  </tbody>
-</table>
-<p>326 rows × 1 columns</p>
-</div>
-
-
-
-If we wanted to select the dates order dates as well as 1 week after the order dates, that would look like this:
-
-
-```python
-pd.read_sql("""
-SELECT orderDate, date(orderDate, "+7 days") AS one_week_later
-  FROM orders;
-""", conn)
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>orderDate</th>
-      <th>one_week_later</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>2003-01-06</td>
-      <td>2003-01-13</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>2003-01-09</td>
-      <td>2003-01-16</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>2003-01-10</td>
-      <td>2003-01-17</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>2003-01-29</td>
-      <td>2003-02-05</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>2003-01-31</td>
-      <td>2003-02-07</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>321</th>
-      <td>2005-05-29</td>
-      <td>2005-06-05</td>
-    </tr>
-    <tr>
-      <th>322</th>
-      <td>2005-05-30</td>
-      <td>2005-06-06</td>
-    </tr>
-    <tr>
-      <th>323</th>
-      <td>2005-05-30</td>
-      <td>2005-06-06</td>
-    </tr>
-    <tr>
-      <th>324</th>
-      <td>2005-05-31</td>
-      <td>2005-06-07</td>
-    </tr>
-    <tr>
-      <th>325</th>
-      <td>2005-05-31</td>
-      <td>2005-06-07</td>
-    </tr>
-  </tbody>
-</table>
-<p>326 rows × 2 columns</p>
-</div>
-
-
-
-You can also use the `strftime` function, which is very similar to the [Python version](https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior). This is useful if you want to split apart a date or time value into different sub-parts. For example, here we extract the year, month, and day of month:
-
-
-```python
-pd.read_sql("""
-SELECT orderDate,
-       strftime("%m", orderDate) AS month,
-       strftime("%Y", orderDate) AS year,
-       strftime("%d", orderDate) AS day
-  FROM orders;
-""", conn)
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>orderDate</th>
-      <th>month</th>
-      <th>year</th>
-      <th>day</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>2003-01-06</td>
-      <td>01</td>
-      <td>2003</td>
-      <td>06</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>2003-01-09</td>
-      <td>01</td>
-      <td>2003</td>
-      <td>09</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>2003-01-10</td>
-      <td>01</td>
-      <td>2003</td>
-      <td>10</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>2003-01-29</td>
-      <td>01</td>
-      <td>2003</td>
-      <td>29</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>2003-01-31</td>
-      <td>01</td>
-      <td>2003</td>
-      <td>31</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>321</th>
-      <td>2005-05-29</td>
-      <td>05</td>
-      <td>2005</td>
-      <td>29</td>
-    </tr>
-    <tr>
-      <th>322</th>
-      <td>2005-05-30</td>
-      <td>05</td>
-      <td>2005</td>
-      <td>30</td>
-    </tr>
-    <tr>
-      <th>323</th>
-      <td>2005-05-30</td>
-      <td>05</td>
-      <td>2005</td>
-      <td>30</td>
-    </tr>
-    <tr>
-      <th>324</th>
-      <td>2005-05-31</td>
-      <td>05</td>
-      <td>2005</td>
-      <td>31</td>
-    </tr>
-    <tr>
-      <th>325</th>
-      <td>2005-05-31</td>
-      <td>05</td>
-      <td>2005</td>
-      <td>31</td>
-    </tr>
-  </tbody>
-</table>
-<p>326 rows × 4 columns</p>
-</div>
-
-
-
-## Introduction to the `WHERE` Clause
-
-With just a `SELECT` expression, we can specify which **columns** we want to select, as well as transform the column values using aliases, built-in functions, and other expressions.
-
-However if we want to filter the **rows** that we want to select, we also need to include a `WHERE` clause. Below are a few examples of the `SELECT` queries from above, with `WHERE` clauses added.
+`WHERE` clauses are especially powerful when combined with more-complex `SELECT` statements. Most of the time you will want to use aliases (with `AS`) in the `SELECT` statements to make the `WHERE` clauses more concise and readable.
 
 ### Selecting Employees Based on String Conditions
 
@@ -2268,7 +691,7 @@ SELECT *, length(firstName) AS name_length
 
 
 
-Or, to select all employees with the first initial of "L.", that would look like this:
+Or, to select all employees with the first initial of "L", that would look like this:
 
 
 ```python
@@ -2382,10 +805,10 @@ SELECT *, substr(firstName, 1, 1) AS first_initial
 
     OperationalError                          Traceback (most recent call last)
 
-    //anaconda3/envs/python3/lib/python3.9/site-packages/pandas/io/sql.py in execute(self, *args, **kwargs)
-       2055         try:
-    -> 2056             cur.execute(*args, **kwargs)
-       2057             return cur
+    //anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in execute(self, *args, **kwargs)
+       1680         try:
+    -> 1681             cur.execute(*args, **kwargs)
+       1682             return cur
 
 
     OperationalError: no such column: L
@@ -2396,7 +819,7 @@ SELECT *, substr(firstName, 1, 1) AS first_initial
 
     DatabaseError                             Traceback (most recent call last)
 
-    /var/folders/bs/vx0h72xd2nq558ct7chx0mw00000gp/T/ipykernel_14874/2492926221.py in <module>
+    <ipython-input-7-083650d31057> in <module>
     ----> 1 pd.read_sql("""
           2 SELECT *, substr(firstName, 1, 1) AS first_initial
           3   FROM employees
@@ -2404,28 +827,28 @@ SELECT *, substr(firstName, 1, 1) AS first_initial
           5 """, conn)
 
 
-    //anaconda3/envs/python3/lib/python3.9/site-packages/pandas/io/sql.py in read_sql(sql, con, index_col, coerce_float, params, parse_dates, columns, chunksize)
-        600 
-        601     if isinstance(pandas_sql, SQLiteDatabase):
-    --> 602         return pandas_sql.read_query(
-        603             sql,
-        604             index_col=index_col,
+    //anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in read_sql(sql, con, index_col, coerce_float, params, parse_dates, columns, chunksize)
+        481 
+        482     if isinstance(pandas_sql, SQLiteDatabase):
+    --> 483         return pandas_sql.read_query(
+        484             sql,
+        485             index_col=index_col,
 
 
-    //anaconda3/envs/python3/lib/python3.9/site-packages/pandas/io/sql.py in read_query(self, sql, index_col, coerce_float, params, parse_dates, chunksize, dtype)
-       2114 
-       2115         args = _convert_params(sql, params)
-    -> 2116         cursor = self.execute(*args)
-       2117         columns = [col_desc[0] for col_desc in cursor.description]
-       2118 
+    //anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in read_query(self, sql, index_col, coerce_float, params, parse_dates, chunksize)
+       1725 
+       1726         args = _convert_params(sql, params)
+    -> 1727         cursor = self.execute(*args)
+       1728         columns = [col_desc[0] for col_desc in cursor.description]
+       1729 
 
 
-    //anaconda3/envs/python3/lib/python3.9/site-packages/pandas/io/sql.py in execute(self, *args, **kwargs)
-       2066 
-       2067             ex = DatabaseError(f"Execution failed on sql '{args[0]}': {exc}")
-    -> 2068             raise ex from exc
-       2069 
-       2070     @staticmethod
+    //anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in execute(self, *args, **kwargs)
+       1691 
+       1692             ex = DatabaseError(f"Execution failed on sql '{args[0]}': {exc}")
+    -> 1693             raise ex from exc
+       1694 
+       1695     @staticmethod
 
 
     DatabaseError: Execution failed on sql '
@@ -2885,6 +1308,124 @@ SELECT *, julianday(shippedDate) - julianday(requiredDate) AS days_late
 ```
 
 
+    ---------------------------------------------------------------------------
+
+    OperationalError                          Traceback (most recent call last)
+
+    //anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in execute(self, *args, **kwargs)
+       1680         try:
+    -> 1681             cur.execute(*args, **kwargs)
+       1682             return cur
+
+
+    OperationalError: no such function: sign
+
+    
+    The above exception was the direct cause of the following exception:
+
+
+    DatabaseError                             Traceback (most recent call last)
+
+    <ipython-input-10-87140b843d29> in <module>
+    ----> 1 pd.read_sql("""
+          2 SELECT *, julianday(shippedDate) - julianday(requiredDate) AS days_late
+          3   FROM orders
+          4  WHERE sign(days_late) = +1;
+          5 """, conn)
+
+
+    //anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in read_sql(sql, con, index_col, coerce_float, params, parse_dates, columns, chunksize)
+        481 
+        482     if isinstance(pandas_sql, SQLiteDatabase):
+    --> 483         return pandas_sql.read_query(
+        484             sql,
+        485             index_col=index_col,
+
+
+    //anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in read_query(self, sql, index_col, coerce_float, params, parse_dates, chunksize)
+       1725 
+       1726         args = _convert_params(sql, params)
+    -> 1727         cursor = self.execute(*args)
+       1728         columns = [col_desc[0] for col_desc in cursor.description]
+       1729 
+
+
+    //anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in execute(self, *args, **kwargs)
+       1691 
+       1692             ex = DatabaseError(f"Execution failed on sql '{args[0]}': {exc}")
+    -> 1693             raise ex from exc
+       1694 
+       1695     @staticmethod
+
+
+    DatabaseError: Execution failed on sql '
+    SELECT *, julianday(shippedDate) - julianday(requiredDate) AS days_late
+      FROM orders
+     WHERE sign(days_late) = +1;
+    ': no such function: sign
+
+
+That was the last query in this lesson using the Northwind data, so let's close that connection:
+
+
+```python
+conn.close()
+```
+
+## Conditional Operators in SQL
+
+In all of the above queries, we used the `=` operator to check if we had an exact match for a given value. However, what if you wanted to select the order details where the price was at least 30 dollars? Or all of the orders that don't currently have a shipped date?
+
+We'll need some more advanced conditional operators for that.
+
+Some important ones to know are:
+
+* `!=` ("not equal to")
+  * Similar to `not` combined with `==` in Python
+* `>` ("greater than")
+  * Similar to `>` in Python
+* `>=` ("greater than or equal to")
+  * Similar to `>=` in Python
+* `<` ("less than")
+  * Similar to `<` in Python
+* `<=` ("less than or equal to")
+  * Similar to `<=` in Python
+* `AND`
+  * Similar to `and` in Python
+* `OR`
+  * Similar to `or` in Python
+* `BETWEEN`
+  * Similar to placing a value between two values with `<=` and `and` in Python, e.g. `(2 <= x) and (x <= 5)`
+* `IN`
+  * Similar to `in` in Python
+* `LIKE`
+  * Uses wildcards to find similar strings. No direct equivalent in Python, but similar to some Bash terminal commands.
+
+### Cats Data
+
+For this section as the queries get more advanced we'll be using a simpler database called `pets_database.db` containing a table called `cats`.
+
+The `cats` table is populated with the following data:
+
+
+|id  |name     |age    |breed              |owner_id   |
+|----|---------|-------|-------------------|-----------|
+|1   |Maru     |3.0    |Scottish Fold      |1.0        |
+|2   |Hana     |1.0    |Tabby              |1.0        |
+|3   |Lil' Bub |5.0    |American Shorthair |NaN        |
+|4   |Moe      |10.0   |Tabby              |NaN        |
+|5   |Patches  |2.0    |Calico             |NaN        |
+|6   |None     |NaN    |Tabby              |NaN        |
+
+Below we make a new database connection and read all of the data from this table:
+
+
+```python
+conn = sqlite3.connect('pets_database.db')
+pd.read_sql("SELECT * FROM cats;", conn)
+```
+
+
 
 
 <div>
@@ -2905,27 +1446,61 @@ SELECT *, julianday(shippedDate) - julianday(requiredDate) AS days_late
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>orderNumber</th>
-      <th>orderDate</th>
-      <th>requiredDate</th>
-      <th>shippedDate</th>
-      <th>status</th>
-      <th>comments</th>
-      <th>customerNumber</th>
-      <th>days_late</th>
+      <th>id</th>
+      <th>name</th>
+      <th>age</th>
+      <th>breed</th>
+      <th>owner_id</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>10165</td>
-      <td>2003-10-22</td>
-      <td>2003-10-31</td>
-      <td>2003-12-26</td>
-      <td>Shipped</td>
-      <td>This order was on hold because customers's cre...</td>
-      <td>148</td>
-      <td>56.0</td>
+      <td>1</td>
+      <td>Maru</td>
+      <td>3.0</td>
+      <td>Scottish Fold</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>Hana</td>
+      <td>1.0</td>
+      <td>Tabby</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>Lil' Bub</td>
+      <td>5.0</td>
+      <td>American Shorthair</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>Moe</td>
+      <td>10.0</td>
+      <td>Tabby</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>Patches</td>
+      <td>2.0</td>
+      <td>Calico</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>6</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>Tabby</td>
+      <td>NaN</td>
     </tr>
   </tbody>
 </table>
@@ -2933,7 +1508,290 @@ SELECT *, julianday(shippedDate) - julianday(requiredDate) AS days_late
 
 
 
-Now that we are finished with our queries, we can close the database connection.
+### `WHERE` Code-Along
+
+In this exercise, you'll walk through executing a handful of common and handy SQL queries that use `WHERE` with conditional operators. We'll start by giving you an example of what this type of query looks like, then have you type a query specifically related to the `cats` table.
+
+#### `WHERE` with `>=`
+
+For the `=`, `!=`, `<`, `<=`, `>`, and `>=` operators, the query looks like:
+
+```sql
+SELECT column(s)
+  FROM table_name
+ WHERE column_name operator value;
+```
+
+> Note: The example above is not valid SQL, it is a template for how the queries are constructed
+
+Type this SQL query between the quotes below to select all cats who are at least 5 years old:
+
+```sql
+SELECT *
+  FROM cats
+ WHERE age >= 5;
+```
+
+
+```python
+pd.read_sql("""
+
+""", conn)
+```
+
+This should return:
+
+|id  |name     |age    |breed              |owner_id   |
+|----|---------|-------|-------------------|-----------|
+|3   |Lil' Bub |5.0    |American Shorthair |None       |
+|4   |Moe      |10.0   |Tabby              |None       |
+
+#### `WHERE` with `BETWEEN`
+
+If you wanted to select all rows with values in a range, you _could_ do this by combining the `<=` and `AND` operators. However, since this is such a common task in SQL, there is a shorter and more efficient command specifically for this purpose, called `BETWEEN`.
+
+A typical query with `BETWEEN` looks like:
+
+```sql
+SELECT column_name(s)
+  FROM table_name
+ WHERE column_name BETWEEN value1 AND value2;
+```
+
+> Note that `BETWEEN` is an **inclusive** range, so the returned values can match the boundary values (not like `range()` in Python)
+
+Let's say you need to select the names of all of the cats whose age is between 1 and 3. Type this SQL query between the quotes below to select all cats who are in this age range:
+
+```sql
+SELECT *
+  FROM cats
+ WHERE age BETWEEN 1 AND 3;
+```
+
+
+```python
+pd.read_sql("""
+
+""", conn)
+```
+
+This should return:
+
+|id  |name     |age    |breed              |owner_id   |
+|----|---------|-------|-------------------|-----------|
+|1   |Maru     |3.0    |Scottish Fold      |1.0        |
+|2   |Hana     |1.0    |Tabby              |1.0        |
+|5   |Patches  |2.0    |Calico             |NaN        |
+
+#### `WHERE` Column Is Not `NULL`
+
+`NULL` in SQL represents missing data. It is similar to `None` in Python or `NaN` in NumPy or pandas. However, we use the `IS` operator to check if something is `NULL`, not the `=` operator (or `IS NOT` instead of `!=`).
+
+To check if a value is `NULL` (or not), the query looks like:
+
+```sql
+SELECT column(s)
+  FROM table_name
+ WHERE column_name IS (NOT) NULL;
+```
+
+> You might have noticed when we selected all rows of `cats`, some owner IDs were `NaN`, then in the above query they are `None` instead. This is a subtle difference where Python/pandas is converting SQL `NULL` values to `NaN` when there are numbers in other rows, and converting to `None` when all of the returned values are `NULL`. This is a subtle difference that you don't need to memorize; it is just highlighted to demonstrate that the operators we use in SQL are _similar_ to Python operators, but not quite the same.
+
+If we want to select all cats that don't currently belong to an owner, we want to select all cats where the `owner_id` is `NULL`.
+
+Type this SQL query between the quotes below to select all cats that don't currently belong to an owner:
+
+```sql
+SELECT *
+  FROM cats
+ WHERE owner_id IS NULL;
+```
+
+
+```python
+pd.read_sql("""
+
+""", conn)
+```
+
+This should return:
+
+|id  |name     |age    |breed              |owner_id   |
+|----|---------|-------|-------------------|-----------|
+|3   |Lil' Bub |5.0    |American Shorthair |None       |
+|4   |Moe      |10.0   |Tabby              |None       |
+|5   |Patches  |2.0    |Calico             |None       |
+|6   |None     |NaN    |Tabby              |None       |
+
+#### `WHERE` with `LIKE`
+
+The `LIKE` operator is very helpful for writing SQL queries with messy data. It uses _wildcards_ to specify which parts of the string query need to be an exact match and which parts can be variable.
+
+When using `LIKE`, a query looks like:
+
+```sql
+SELECT column(s)
+  FROM table_name
+ WHERE column_name LIKE 'string_with_wildcards';
+```
+
+The most common wildcard you'll see is `%`. This is similar to the `*` wildcard in Bash or regex: it means zero or more characters with any value can be in that position.
+
+So for example, if we want all cats with names that start with "M", we could use a query containing `M%`. This means that we're looking for matches that start with one character "M" (or "m", since this is a case-insensitive query in SQLite) and then zero or more characters that can have any value.
+
+Type this SQL query between the quotes below to select all cats with names that start with "M" (or "m"):
+
+```sql
+SELECT *
+  FROM cats
+ WHERE name LIKE 'M%';
+```
+
+
+```python
+pd.read_sql("""
+
+""", conn)
+```
+
+This should return:
+
+|id  |name     |age    |breed              |owner_id   |
+|----|---------|-------|-------------------|-----------|
+|1   |Maru     |3.0    |Scottish Fold      |1.0        |
+|4   |Moe      |10.0   |Tabby              |NaN        |
+
+Note that we also could have used the `substr` SQL built-in function here to perform the same task:
+
+```sql
+SELECT *
+  FROM cats
+ WHERE substr(name, 1, 1) = "M";
+```
+
+Unlike in Python where:
+
+> There should be one-- and preferably only one --obvious way to do it. *(Zen of Python)*
+
+there will often be multiple valid approaches to writing the same SQL query. Sometimes one will be more efficient than the other, and sometimes the only difference will be a matter of preference.
+
+The other wildcard used for comparing strings is `_`, which means exactly one character, with any value.
+
+For example, if we wanted to select all cats with four-letter names where the second letter was "a", we could use `_a__`.
+
+Type this SQL query between the quotes below to select all cats with names where the second letter is "a" and the name is four letters long:
+
+```sql
+SELECT *
+  FROM cats
+ WHERE name LIKE '_a__';
+```
+
+
+```python
+pd.read_sql("""
+
+""", conn)
+```
+
+This should return:
+
+|id  |name     |age    |breed              |owner_id   |
+|----|---------|-------|-------------------|-----------|
+|1   |Maru     |3      |Scottish Fold      |1          |
+|2   |Hana     |1      |Tabby              |1          |
+
+Again, we could have done this using `length` and `substr`, although it would be much less concise:
+
+```sql
+SELECT *
+  FROM cats
+ WHERE length(name) = 4 AND substr(name, 2, 1) = "a";
+```
+
+These examples are a bit silly, but you can imagine how this technique would help to write queries between multiple datasets where the names don't quite match exactly! You can combine `%` and `_` in your string to narrow and expand your query results as needed.
+
+#### `SELECT` with `COUNT`
+
+Now, let's talk about the SQL aggregate function `COUNT`.
+
+**SQL aggregate functions** are SQL statements that can get the average of a column's values, retrieve the minimum and maximum values from a column, sum values in a column, or count a number of records that meet certain conditions. You can learn more about these SQL aggregators [here](http://www.sqlclauses.com/sql+aggregate+functions) and [here](http://zetcode.com/db/sqlite/select/).
+
+For now, we'll just focus on `COUNT`, which counts the number of records that meet a certain condition. Here's a standard SQL query using `COUNT`:
+
+```sql
+SELECT COUNT(column_name)
+  FROM table_name
+ WHERE conditional_statement;
+```
+
+Let's try it out and count the number of cats who have an `owner_id` of `1`. Type this SQL query between the quotes below:
+
+```sql
+SELECT COUNT(owner_id)
+  FROM cats
+ WHERE owner_id = 1;
+```
+
+
+```python
+pd.read_sql("""
+
+""", conn)
+```
+
+This should return:
+
+|  |COUNT(owner_id) |
+|--|----------------|
+|0 |2               |
+
+## Note on `SELECT`
+
+We are now familiar with this syntax:
+
+```sql
+SELECT name
+  FROM cats;
+```
+
+However, you may not know that this can be written like this as well:
+
+```sql
+SELECT cats.name
+  FROM cats;
+```
+
+Both return the same data.
+
+SQLite allows us to explicitly state the `tableName.columnName` you want to select. This is particularly useful when you want data from two different tables.
+
+Imagine you have another table called `dogs` with a column containing all of the dog names:
+
+```sql
+CREATE TABLE dogs (
+	id   INTEGER PRIMARY KEY,
+	name TEXT
+);
+```
+
+```sql
+INSERT INTO dogs (name)
+VALUES ("Clifford");
+```
+
+
+If you want to get the names of all the dogs and cats, you can no longer run a query with just the column name.
+`SELECT name FROM cats,dogs;` will return `Error: ambiguous column name: name`.
+
+Instead, you must explicitly follow the `tableName.columnName` syntax.
+```sql
+SELECT cats.name, dogs.name
+  FROM cats, dogs;
+```
+
+You may see this in the future. Don't let it trip you up!
+
 
 
 ```python
@@ -2942,4 +1800,4 @@ conn.close()
 
 ## Summary
 
-In this lesson, you saw how to execute SQL `SELECT` queries, specifying which columns to be selected as well as transforming the columns using string, numeric, and date/time built-in functions and expressions. You also saw how to filter the resulting rows using a `WHERE` clause that checked whether a given column was equal to a specific value. Going forward, you'll learn more sophisticated techniques using the `WHERE` clause as well as additional keywords for specifying your query parameters!
+In this lesson, you saw how to filter the resulting rows of a SQL query using a `WHERE` clause that checked whether a given column was equal to a specific value. You also got a basic introduction to aggregate functions by seeing an example of `COUNT`, and dove deeper into some conditional operators including `BETWEEN` and `LIKE`.

@@ -11,6 +11,7 @@ However if we want to filter the **rows** that we want to select, we also need t
 ## Objectives
 
 You will be able to:
+
 - Retrieve a subset of records from a table using a `WHERE` clause
 - Filter results using conditional operators such as `BETWEEN`, `IS NULL`, and `LIKE`
 - Apply an aggregate function to the result of a filtered query

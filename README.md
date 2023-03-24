@@ -806,10 +806,10 @@ SELECT *, substr(firstName, 1, 1) AS first_initial
 
     OperationalError                          Traceback (most recent call last)
 
-    //anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in execute(self, *args, **kwargs)
-       1680         try:
-    -> 1681             cur.execute(*args, **kwargs)
-       1682             return cur
+    ~/opt/anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in execute(self, *args, **kwargs)
+       2017         try:
+    -> 2018             cur.execute(*args, **kwargs)
+       2019             return cur
 
 
     OperationalError: no such column: L
@@ -828,28 +828,28 @@ SELECT *, substr(firstName, 1, 1) AS first_initial
           5 """, conn)
 
 
-    //anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in read_sql(sql, con, index_col, coerce_float, params, parse_dates, columns, chunksize)
-        481 
-        482     if isinstance(pandas_sql, SQLiteDatabase):
-    --> 483         return pandas_sql.read_query(
-        484             sql,
-        485             index_col=index_col,
+    ~/opt/anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in read_sql(sql, con, index_col, coerce_float, params, parse_dates, columns, chunksize)
+        562 
+        563     if isinstance(pandas_sql, SQLiteDatabase):
+    --> 564         return pandas_sql.read_query(
+        565             sql,
+        566             index_col=index_col,
 
 
-    //anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in read_query(self, sql, index_col, coerce_float, params, parse_dates, chunksize)
-       1725 
-       1726         args = _convert_params(sql, params)
-    -> 1727         cursor = self.execute(*args)
-       1728         columns = [col_desc[0] for col_desc in cursor.description]
-       1729 
+    ~/opt/anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in read_query(self, sql, index_col, coerce_float, params, parse_dates, chunksize, dtype)
+       2076 
+       2077         args = _convert_params(sql, params)
+    -> 2078         cursor = self.execute(*args)
+       2079         columns = [col_desc[0] for col_desc in cursor.description]
+       2080 
 
 
-    //anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in execute(self, *args, **kwargs)
-       1691 
-       1692             ex = DatabaseError(f"Execution failed on sql '{args[0]}': {exc}")
-    -> 1693             raise ex from exc
-       1694 
-       1695     @staticmethod
+    ~/opt/anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in execute(self, *args, **kwargs)
+       2028 
+       2029             ex = DatabaseError(f"Execution failed on sql '{args[0]}': {exc}")
+    -> 2030             raise ex from exc
+       2031 
+       2032     @staticmethod
 
 
     DatabaseError: Execution failed on sql '
@@ -1304,66 +1304,57 @@ We can also check to see if any orders were shipped late (`shippedDate` after `r
 pd.read_sql("""
 SELECT *, julianday(shippedDate) - julianday(requiredDate) AS days_late
   FROM orders
- WHERE sign(days_late) = +1;
+ WHERE days_late > 0;
 """, conn)
 ```
 
 
-    ---------------------------------------------------------------------------
-
-    OperationalError                          Traceback (most recent call last)
-
-    //anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in execute(self, *args, **kwargs)
-       1680         try:
-    -> 1681             cur.execute(*args, **kwargs)
-       1682             return cur
 
 
-    OperationalError: no such function: sign
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-    
-    The above exception was the direct cause of the following exception:
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
 
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>orderNumber</th>
+      <th>orderDate</th>
+      <th>requiredDate</th>
+      <th>shippedDate</th>
+      <th>status</th>
+      <th>comments</th>
+      <th>customerNumber</th>
+      <th>days_late</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>10165</td>
+      <td>2003-10-22</td>
+      <td>2003-10-31</td>
+      <td>2003-12-26</td>
+      <td>Shipped</td>
+      <td>This order was on hold because customers's cre...</td>
+      <td>148</td>
+      <td>56.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
-    DatabaseError                             Traceback (most recent call last)
-
-    <ipython-input-10-87140b843d29> in <module>
-    ----> 1 pd.read_sql("""
-          2 SELECT *, julianday(shippedDate) - julianday(requiredDate) AS days_late
-          3   FROM orders
-          4  WHERE sign(days_late) = +1;
-          5 """, conn)
-
-
-    //anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in read_sql(sql, con, index_col, coerce_float, params, parse_dates, columns, chunksize)
-        481 
-        482     if isinstance(pandas_sql, SQLiteDatabase):
-    --> 483         return pandas_sql.read_query(
-        484             sql,
-        485             index_col=index_col,
-
-
-    //anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in read_query(self, sql, index_col, coerce_float, params, parse_dates, chunksize)
-       1725 
-       1726         args = _convert_params(sql, params)
-    -> 1727         cursor = self.execute(*args)
-       1728         columns = [col_desc[0] for col_desc in cursor.description]
-       1729 
-
-
-    //anaconda3/envs/learn-env/lib/python3.8/site-packages/pandas/io/sql.py in execute(self, *args, **kwargs)
-       1691 
-       1692             ex = DatabaseError(f"Execution failed on sql '{args[0]}': {exc}")
-    -> 1693             raise ex from exc
-       1694 
-       1695     @staticmethod
-
-
-    DatabaseError: Execution failed on sql '
-    SELECT *, julianday(shippedDate) - julianday(requiredDate) AS days_late
-      FROM orders
-     WHERE sign(days_late) = +1;
-    ': no such function: sign
 
 
 That was the last query in this lesson using the Northwind data, so let's close that connection:

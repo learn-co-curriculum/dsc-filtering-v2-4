@@ -20,7 +20,7 @@ You will be able to:
 
 For this section of the lesson, we'll use the Northwind database, the ERD (entity-relationship diagram) of which is shown below:  
 
-<img src="images/Database-Schema.png">
+<img src="https://curriculum-content.s3.amazonaws.com/data-science/images/Database-Schema.png">
 
 ### Northwind Data
 
